@@ -8,6 +8,11 @@ const postSchema = mongoose.Schema({
   text: {
     type: String,
     required: false
+  },
+  author: {
+    type: mongoose.SchemaTypes.ObjectId,
+    required: [true, 'All posts must have author'],
+    ref: 'User'
   }
 }, {
   timestamps: true,
