@@ -69,8 +69,7 @@ const loginUser = async (data) => {
 
 const getUser = async ({ queryKey }) => {
   try {
-    const [_key, uri, { token }] = queryKey
-    console.log(token);
+    const [_key, uri] = queryKey
     const res = await fetch(`${API_URL}/users/${uri}`, {
       headers: getConfig()
     })
@@ -79,7 +78,6 @@ const getUser = async ({ queryKey }) => {
       throw user.message
     }
     return user
-
   } catch (err) {
     throw new Error(err)
   }
