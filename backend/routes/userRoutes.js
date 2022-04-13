@@ -7,16 +7,21 @@ const {
   registerUser,
   loginUser,
   returnUser,
+  userExists,
+  getUser,
   getUsers,
   editUser,
   deleteUser,
 } = require('../controllers/userController')
 
+router.get('/', userExists)
 router.post('/register', registerUser)
 
 router.post('/login', loginUser)
 
 router.get('/dev', devMiddleware, getUsers)
+
+router.get('/me', requireToken, getUser)
 
 router.route('/:uri')
   .get(processURI(User), verifyToken, returnUser)

@@ -13,7 +13,7 @@ const generateSlug = require('../services/miscServices')
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, image } = req.body
 
-  if (!name || !email || !password || !image) {
+  if (!name || !email || !password) {
     res.status(400)
     throw new Error('Please enter all fields.')
   }
@@ -37,15 +37,19 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password: hashedpassword,
     uri,
-    image,
   })
   // checks whether user is created
   if (user) {
     res.status(201).json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      image: user.image,
+      user: {
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        uri: user.uri,
+        posts: user.posts,
+        groups: user.groups,
+        restricted: user.restricted,
+      },
       token: generateToken(user.id),
     })
   } else {
@@ -95,18 +99,50 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route GET api/users/:uri
 // @access Public
 const returnUser = asyncHandler(async (req, res) => {
-
-  const { _id: id, name, image, posts, groups, restricted } = req.data
+  const { _id: id, name, uri, image, posts, groups, restricted } = req.data
   const token = req.token?.id
+  // user requesting his data gets full data
+  if (token === id) {
+    res.status(200).json({
+      user: req.data
+    })
+  }
   res.status(200).json({
-    _id: id,
-    name,
-    image,
-    // only same user can access restricted values
-    posts: (!restricted.posts || token === id) ? posts : [],
-    groups: (!restricted.groups || token === id) ? groups : [],
+    user: {
+      _id: id,
+      name,
+      image,
+      uri,
+      // only same user can access restricted values
+      posts: (!restricted.posts || token === id) ? posts : [],
+      groups: (!restricted.groups || token === id) ? groups : [],
+    },
   })
 
+})
+
+// @desc Checks if user under certain name/email exists
+// @route GET api/users/?params
+// @access Public
+const userExists = asyncHandler(async (req, res) => {
+  if (req.query?.name) {
+    const user = await User.findOne({ 'name': req.query?.name }).select('name')
+    res.status(200).json(!!user)
+  } else if (req.query?.email) {
+    const user = await User.findOne({ 'email': req.query?.email }).select('email')
+    res.status(200).json(!!user)
+  } else {
+    res.status(400).json(false)
+  }
+
+})
+
+// @desc get all data of the user from token
+// @route GET api/users/me
+// @access Private
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.token.id)
+  res.status(200).json(user)
 })
 
 // @desc get all users
@@ -198,6 +234,8 @@ module.exports = {
   registerUser,
   loginUser,
   returnUser,
+  userExists,
+  getUser,
   getUsers,
   editUser,
   deleteUser

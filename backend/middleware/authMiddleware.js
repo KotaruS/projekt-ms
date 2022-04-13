@@ -15,7 +15,7 @@ const requireToken = asyncHandler(async (req, res, next) => {
     }
   } else {
     res.status(401)
-    throw new Error('No token')
+    throw new Error('No token provided')
   }
 })
 

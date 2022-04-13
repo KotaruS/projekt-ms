@@ -71,7 +71,7 @@ const returnPost = asyncHandler(async (req, res) => {
 // @access Private
 const getPosts = asyncHandler(async (req, res) => {
   // throw new Error("Hey, not to disturb you or anything, but something went wrong.")
-  const posts = await Post.find()
+  const posts = await Post.find().populate('author', 'name image uri').populate('group', 'name uri image')
   res.status(200).json(posts)
 
 })
