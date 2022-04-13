@@ -10,11 +10,11 @@
 
 # production
 /build
-/public/cdn
 /backend/cdn
 
 # misc
 .DS_Store
+/etc/secrets
 .env
 .env.local
 .env.development.local

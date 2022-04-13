@@ -30,7 +30,7 @@ function Layout() {
           {user.isSuccess && (
             <>
               <div className="profile">
-                <img className="profile-image" src={`${backend_url}/cdn/tm.svg`} alt="" />
+                <img className="profile-image" src={`/cdn/tm.svg`} alt="" />
                 <h4>{user.data.name}</h4>
               </div>
               <h4>Groups</h4>

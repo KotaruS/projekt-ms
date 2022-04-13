@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:5310/api'
+
+const API_URL = '/api'
 
 const getConfig = () => ({
   'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : undefined,
@@ -7,8 +8,12 @@ const getConfig = () => ({
 // post requests 
 const getPosts = async () => {
   try {
-    const posts = await fetch(`${API_URL}/posts/dev`)
-    return posts.json()
+    const res = await fetch(`${API_URL}/posts/dev`)
+    const post = await res.json()
+    if (!res.ok) {
+      throw post.message
+    }
+    return post
   } catch (err) {
     throw new Error(err)
   }
