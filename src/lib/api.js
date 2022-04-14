@@ -5,6 +5,24 @@ const getConfig = () => ({
   'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : undefined,
 })
 
+// group requests 
+const createGroup = async (data) => {
+  try {
+    const res = await fetch(`${API_URL}/groups/create`, {
+      method: 'POST',
+      headers: getConfig(),
+      body: data,
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 // post requests 
 const getPosts = async () => {
   try {
@@ -118,6 +136,7 @@ export {
   createPost,
   getPosts,
   getUser,
+  createGroup,
   registerUser,
   loginUser,
   checkForExistance,

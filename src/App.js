@@ -10,6 +10,8 @@ import Register from './views/Register'
 import Post from './views/Post'
 import NoMatch from './views/NoMatch'
 import Layout from './app/Layout'
+import CreateGroup from "./views/groups/CreateGroup"
+import CreatePost from "./views/posts/CreatePost"
 
 const queryClient = new QueryClient()
 
@@ -40,7 +42,14 @@ function ForumApp() {
           <Route path='*' element={<NoMatch />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/post/:postId' element={<Post />} />
+          <Route path='/post' >
+            <Route path=':postId' element={<Post />} />
+            <Route path='create' element={<CreatePost />} />
+          </Route>
+          <Route path='/group' >
+            <Route path='create' element={<CreateGroup />} />
+          </Route>
+          <Route path='/group' element={<Logout />} />
           <Route path='/logout' element={<Logout />} />
         </Route>
       </Routes>

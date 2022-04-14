@@ -10,7 +10,7 @@ const generateSlug = require('../services/miscServices')
 const createGroup = asyncHandler(async (req, res) => {
   const { name, description, image } = req.body
   const user = req.token?.id
-
+  console.log(req.file);
   if (!user || !name) {
     res.status(400)
     throw new Error('Please provide all data.')
@@ -35,13 +35,9 @@ const createGroup = asyncHandler(async (req, res) => {
     // inserts group into user model
     const creator = await User.findById(user)
     creator.groups = [...creator.groups, group._id]
-    console.log(group.posts)
-    console.log('////////')
-    console.log(group.members)
     creator.save()
     res.status(201).json(group)
   } catch (error) {
-    console.log(error)
     res.status(400)
     throw new Error(error)
   }

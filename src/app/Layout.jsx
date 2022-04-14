@@ -1,6 +1,6 @@
 import { useContext, } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
-import Logo from "../logo.svg"
+import Logo from "../styles/logo.svg"
 import { UserContext } from "../App"
 import {
   FaSignOutAlt,
@@ -13,7 +13,12 @@ import { getUser } from "../lib/api"
 
 function Layout() {
   const { context, setContext } = useContext(UserContext)
-  const user = useQuery(['user', 'me',], getUser, { retry: 1 })
+
+  const user = useQuery(['user', 'me'], getUser, {
+    retry: 1,
+    enabled: !!context.token
+  })
+
   // const userGroups = useQuery('userGroups', getUserGroups)
   const location = useLocation()
   const color = { '--color': 'var(--purple)' }
@@ -22,7 +27,7 @@ function Layout() {
   return (
     <>
       <nav className="main-nav">
-        <Link to='/'>
+        <Link className="spacer" to='/'>
           <img src={Logo} alt="logo" width="200" />
         </Link>
         <form action="/" method="get">
@@ -31,10 +36,10 @@ function Layout() {
         <ul>
           {user.isSuccess ?
             <>
-              <li><Link to='/post' className="btn" style={color}>
+              <li><Link to='/post/create' className="btn" style={color}>
                 <FaRegPlusSquare /> Create post
               </Link></li>
-              <li><Link to='/group' className="btn" style={color} state={{ background: location }}>
+              <li><Link to='/group/create' className="btn" style={color}>
                 <FaRegPlusSquare /> Create group
               </Link></li>
               <li><Link to='/logout' className="btn" style={color} >

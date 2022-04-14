@@ -5,21 +5,25 @@
   display: flex;
   position: relative;
   width: 100%;
-  padding: 5px 30px;
+  padding: 5px;
   justify-content: space-between;
   z-index: 10;
 }
 
 .main-nav img {
-  width: 500px;
-  max-width: 20%;
+  padding: 5px 0;
   height: 100%;
   object-fit: contain;
 }
 
+.main-nav .spacer {
+  width: 500px;
+  max-width: 30vw;
+}
+
 .main-nav form {
   max-width: 800px;
-  width: 50%;
+  width: 40vw;
   min-width: 300px;
   display: flex;
   padding: 5px 0;
@@ -47,11 +51,10 @@
 
 .main-nav ul {
   width: 500px;
-  max-width: 20%;
-  justify-content: end;
+  max-width: 30vw;
+  justify-content: flex-end;
   flex-direction: row;
   display: flex;
-
 }
 
 .main-nav ul li {
@@ -212,10 +215,9 @@
   box-shadow: var(--shadow-full);
   border: 3px solid transparent;
   margin: 10px 0;
-  padding: 15px 10px;
+  padding: 10px;
   border-radius: var(--radius);
   transition: var(--def-tran);
-
 }
 
 .post-feed-card:hover {
@@ -352,13 +354,12 @@
   }
 }
 
-
 .form-modal .header {
   display: flex;
 }
 
 .form-modal .header .icon-group {
-  margin: 0 0 auto auto;
+  margin: .25em 0 auto auto;
   cursor: pointer;
 }
 
@@ -391,9 +392,31 @@
 .form-modal form label {
   display: block;
   font-size: 1em;
-  color: rgb(var(--color-fg-accent));
+  align-self: baseline;
+  color: rgb(var(--purple-dark));
   font-weight: 500;
   padding: 1em 0 .75em 0;
+}
+
+.form-modal form label img {
+  display: block;
+  color: rgb(var(--purple-dark));
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin: 1em 0 0 0;
+  border-radius: calc(var(--radius)*2);
+  background: rgb(var(--teal), 10%);
+  box-shadow: var(--shadow) rgb(var(--teal-dark), 25%);
+  transition: var(--def-tran);
+  cursor: pointer;
+}
+
+.form-modal form label img:hover {
+  border-radius: calc(var(--radius)*2);
+  background: rgb(var(--teal), 20%);
+  box-shadow: var(--shadow) rgb(var(--teal-dark), 55%);
+  margin: 1em 0 0 0;
 }
 
 .form-modal form input {
@@ -406,12 +429,39 @@
   color: rgb(var(--teal-dark));
 }
 
+.form-modal textarea {
+  border: 2px solid transparent;
+  padding: .5rem;
+  font-family: var(--fonts);
+  border-radius: var(--radius);
+  color: rgb(var(--color-fg-accent));
+  background: rgb(var(--teal-light), 30%);
+  font-size: .9em;
+  font-weight: 400;
+  line-height: 1.5em;
+  resize: none;
+  outline: none;
+  margin: 0 0 1em 0;
+}
+
+.form-modal textarea::placeholder {
+  color: rgb(var(--teal-dark));
+  font-family: var(--fonts);
+}
+
+.form-modal textarea:focus {
+  border: 2px solid rgb(var(--blue-light));
+  box-shadow: var(--shadow-sm) rgb(var(--blue-light), 30%);
+  background: rgb(var(--pure-color));
+  color: rgb(var(--blue-dark));
+}
+
 .form-modal input:not([type='submit']) {
   border: 2px solid transparent;
   padding: .5rem;
   border-bottom: 2px solid rgb(var(--teal));
   border-radius: var(--radius);
-  color: rgb(var(--teal-dark));
+  color: rgb(var(--color-fg-accent));
   background: rgb(var(--teal-light), 20%);
   margin: 0 0 1em 0;
 }
