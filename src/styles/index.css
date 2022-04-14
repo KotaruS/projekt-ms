@@ -19,7 +19,7 @@
   --blue-dark: 8, 29, 97;
   --blue: 41, 112, 255;
   --blue-light: 194, 214, 255;
-  --teal-dark: 6, 101, 108;
+  --teal-dark: 46, 182, 208;
   --teal: 90, 253, 199;
   --teal-light: 227, 255, 234;
   --radius: 0.5rem;
@@ -45,4 +45,75 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+nav ul li a {
+  transition: var(--def-tran);
+}
+
+h1 {
+  font-family: var(--fonts);
+  font-weight: 800;
+  font-size: 2.5rem;
+  margin: 1rem 0;
+}
+
+.buttoner {
+  cursor: pointer;
+  margin: .25em;
+  padding: .25em;
+  transition: var(--def-tran);
+  border-radius: calc(var(--radius)/2);
+}
+
+.buttoner * {
+  transition: var(--def-tran);
+}
+
+a.buttoner {
+  text-decoration: none;
+  color: rgb(var(--color));
+}
+
+.buttoner:hover {
+  background: rgb(var(--color), 10%);
+}
+
+.buttoner:hover * {
+  color: rgb(var(--color));
+}
+
+.buttoner:hover .icon svg {
+  background: transparent;
+}
+
+.btn {
+  padding: .5em 1em;
+  background: rgb(var(--color), 10%);
+  color: rgb(var(--color));
+  fill: rgb(var(--color));
+  stroke: rgb(var(--color));
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: var(--def-tran);
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn svg {
+  vertical-align: text-bottom;
+  margin: 0 .3em 0 0;
+}
+
+.btn:hover {
+  background: rgb(var(--color));
+  color: rgb(var(--pure-color));
+  fill: rgb(var(--pure-color));
+  stroke: rgb(var(--pure-color));
+  box-shadow: var(--shadow-sm) rgb(var(--color), 40%);
+}
+
+.btn:focus {
+  font-weight: 600;
+  box-shadow: var(--shadow-sm) rgb(var(--color), 80%);
 }

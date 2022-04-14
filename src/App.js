@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider, } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import Feed from './views/Feed'
+import Logout from './views/Logout'
 import Login from './views/Login'
 import Register from './views/Register'
 import Post from './views/Post'
@@ -11,8 +12,6 @@ import NoMatch from './views/NoMatch'
 import Layout from './app/Layout'
 
 const queryClient = new QueryClient()
-
-const backend_url = 'http://localhost:5310'
 
 const UserContext = createContext()
 
@@ -42,6 +41,7 @@ function ForumApp() {
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/post/:postId' element={<Post />} />
+          <Route path='/logout' element={<Logout />} />
         </Route>
       </Routes>
       {background && (
@@ -72,4 +72,4 @@ function UserProvider(props) {
 
 
 
-export { App, UserContext, backend_url };
+export { App, UserContext };

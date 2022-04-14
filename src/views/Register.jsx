@@ -26,9 +26,7 @@ function Register() {
       setContext({ ...context, token })
       setForm('success')
       queryClient.invalidateQueries(['user', 'me'])
-      setTimeout(() => {
-        navigate('/')
-      }, 2000)
+      navigate('/')
     },
     onError: () => {
       setForm('failed')
@@ -100,14 +98,12 @@ function Register() {
 
 
   return (
-    <div className="form-modal">
-      <div className="card">
+    <>
+      <div className="form-modal">
         <div className='header'>
           <h3>Sign up</h3>
           <div className="icon-group" onClick={handleClick} style={color}>
-            <div className="icon">
-              <IoArrowBack />
-            </div>
+            <IoArrowBack className="icon" />
             <span>Go back</span>
           </div>
         </div>
@@ -182,9 +178,9 @@ function Register() {
           />
           <input type="submit" value="Sign up" />
         </form>
-      </div >
-    </div >
-
+      </div>
+      <div onClick={handleClick} className='modal-background' />
+    </>
   )
 }
 

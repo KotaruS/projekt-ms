@@ -1,10 +1,9 @@
-import { useState, useEffect, useContext } from 'react'
+import { useContext } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
-import { useQueryClient, useMutation, useQuery } from 'react-query'
+import { useQueryClient, useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../App'
 import { loginUser } from '../lib/api'
-import { useDebouncedState } from '../lib/utility'
 import { StatusMessage } from '../components'
 
 
@@ -19,9 +18,7 @@ function Login() {
       localStorage.setItem('token', token)
       setContext({ ...context, token })
       queryClient.invalidateQueries(['user', 'me'])
-      setTimeout(() => {
-        navigate('/')
-      }, 2000);
+      navigate('/')
     }
   })
   const handleClick = (event) => {
@@ -37,14 +34,13 @@ function Login() {
     })
   }
   return (
-    <div className="form-modal">
-      <div className="card">
+    <>
+
+      <div className="form-modal">
         <div className='header'>
           <h3>Login</h3>
           <div className="icon-group" onClick={handleClick} style={color}>
-            <div className="icon">
-              <IoArrowBack />
-            </div>
+            <IoArrowBack className="icon" />
             <span>Go back</span>
           </div>
         </div>
@@ -75,8 +71,8 @@ function Login() {
             value="Sign in" />
         </form>
       </div>
-    </div>
-
+      <div onClick={handleClick} className='modal-background' />
+    </>
   )
 }
 export default Login
