@@ -3,43 +3,61 @@ const Group = require('../models/groupModel')
 const User = require('../models/userModel')
 const Post = require('../models/postModel')
 const generateSlug = require('../services/miscServices')
+const fs = require('fs')
+const path = require('path')
+
 
 // @desc Create a new group under logged in user
 // @route POST api/groups/create
 // @access Private
 const createGroup = asyncHandler(async (req, res) => {
-  const { name, description, image } = req.body
+  const { name, description } = req.body
   const user = req.token?.id
-  console.log(req.file);
   if (!user || !name) {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Please provide all data.')
   }
-
   const groupExists = await Group.findOne({ name })
   if (groupExists) {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Group with the same name already exists, use different name.')
   }
   const uri = await generateSlug(2, name, Group)
-  try {
-    const group = await Group.create({
-      name,
-      description,
-      image,
-      uri,
-      owner: user,
-      members: [user]
-    })
+  console.log(req.file);
+  const group = await Group.create({
+    name,
+    description,
+    image: req.file ? req.file.filename : '/group-blank.svg',
+    uri,
+    owner: user,
+    members: [user]
+  })
 
+  if (group) {
     // inserts group into user model
     const creator = await User.findById(user)
     creator.groups = [...creator.groups, group._id]
     creator.save()
     res.status(201).json(group)
-  } catch (error) {
+  } else {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
-    throw new Error(error)
+    throw new Error('Group could not be create')
+  }
+})
+
+
+// @desc Checks if user under certain name/email exists
+// @route GET api/users/?params
+// @access Public
+const groupExists = asyncHandler(async (req, res) => {
+  if (req.query?.name) {
+    const group = await Group.findOne({ 'name': req.query?.name }).select('name')
+    res.status(200).json(!!group)
+  } else {
+    res.status(400).json(false)
   }
 })
 
@@ -145,6 +163,7 @@ const deleteGroup = asyncHandler(async (req, res) => {
 module.exports = {
   createGroup,
   getGroups,
+  groupExists,
   returnGroup,
   updateGroupDetails,
   joinGroup,

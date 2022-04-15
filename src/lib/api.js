@@ -43,10 +43,7 @@ const registerUser = async (data) => {
   try {
     const res = await fetch(`${API_URL}/users/register`, {
       method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      body: data,
     })
     const user = await res.json()
     if (!res.ok) {
@@ -60,9 +57,9 @@ const registerUser = async (data) => {
 
 const checkForExistance = async ({ queryKey }) => {
   try {
-    const [_key, value] = queryKey
+    const [route, key, value] = queryKey
     if (value === '') { return }
-    const exists = await fetch(`${API_URL}/users/?${_key}=${value}`)
+    const exists = await fetch(`${API_URL}/${route}s/?${key}=${value}`)
     return exists.json()
   } catch (err) {
     throw new Error(err)

@@ -11,30 +11,33 @@ const generateSlug = require('../services/miscServices')
 // @route POST api/users/register
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, image } = req.body
+  const { name, email, password } = req.body
 
   if (!name || !email || !password) {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Please enter all fields.')
   }
 
   if (!isEmail(email)) {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Invalid email address')
   }
   // checks if user with email or username exists
   const userExists = await User.findOne({ $or: [{ name }, { email }] })
   if (userExists) {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Name or email adress is already used.')
   }
   // generates URI, if conflicting URI exists -> appends 4 digits (max retries: 2)
   const uri = await generateSlug(2, name, User)
-
   const hashedpassword = await hashPassword(password)
   const user = await User.create({
     name,
     email,
+    image: req.file ? req.file.filename : '/user-blank.svg',
     password: hashedpassword,
     uri,
   })
@@ -45,6 +48,7 @@ const registerUser = asyncHandler(async (req, res) => {
         _id: user.id,
         name: user.name,
         email: user.email,
+        image: user.image,
         uri: user.uri,
         posts: user.posts,
         groups: user.groups,
@@ -53,6 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
       token: generateToken(user.id),
     })
   } else {
+    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(500)
     throw new Error('User could not be created')
   }
@@ -102,6 +107,7 @@ const returnUser = asyncHandler(async (req, res) => {
   const { _id: id, name, uri, image, posts, groups, restricted } = req.data
   const token = req.token?.id
   // user requesting his data gets full data
+  req.data.populate('posts').populate('groups')
   if (token === id) {
     res.status(200).json({
       user: req.data
@@ -134,14 +140,13 @@ const userExists = asyncHandler(async (req, res) => {
   } else {
     res.status(400).json(false)
   }
-
 })
 
 // @desc get all data of the user from token
 // @route GET api/users/me
 // @access Private
 const getUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.token.id)
+  const user = await User.findById(req.token.id).populate('posts').populate('groups')
   res.status(200).json(user)
 })
 

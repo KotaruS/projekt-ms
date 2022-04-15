@@ -13,9 +13,10 @@ const {
   editUser,
   deleteUser,
 } = require('../controllers/userController')
+const { upload } = require('../middleware/fileMiddleware')
 
 router.get('/', userExists)
-router.post('/register', registerUser)
+router.post('/register', upload.single('image'), registerUser)
 
 router.post('/login', loginUser)
 

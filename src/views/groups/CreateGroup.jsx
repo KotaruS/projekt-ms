@@ -1,17 +1,31 @@
 import { useContext, useState } from "react"
-import { useMutation, useQueryClient } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
 import { IoArrowBack, IoImage } from "react-icons/io5"
-import ImageIcon from "../../styles/image-upload.svg"
-import { createGroup } from "../../lib/api"
+import { checkForExistance, createGroup } from "../../lib/api"
+import { StatusMessage } from "../../components"
+import { useDebouncedState } from "../../lib/utility"
 
 function CreateGroup() {
   const queryClient = useQueryClient()
   const [imageblob, setImageBlob] = useState('')
+  const [name, setName] = useDebouncedState('', 300)
   const navigate = useNavigate()
-  const { context, setContext } = useContext(UserContext)
-  const submit = useMutation(createGroup)
+  const [form, setForm] = useState('')
+
+  const nameExists = useQuery(['group', 'name', name], checkForExistance)
+  const submit = useMutation(createGroup, {
+    onSuccess: () => {
+      setForm('success')
+      navigate('/')
+      queryClient.invalidateQueries(['user', 'me'])
+    },
+    onError: () => {
+      setForm('failed')
+    }
+  })
+
   const color = { '--color': 'var(--blue)' }
 
   const handleClick = () => {
@@ -22,6 +36,7 @@ function CreateGroup() {
     setImageBlob(blob)
   }
   const handleSubmit = e => {
+    setForm('submiting')
     e.preventDefault()
     const formStuff = new FormData()
     formStuff.append('name', e.target.name.value)
@@ -29,7 +44,10 @@ function CreateGroup() {
     formStuff.append('image', e.target.image.files[0])
     submit.mutate(formStuff)
   }
-
+  const handleChange = ({ target }) => {
+    setName(target.value)
+    target.setCustomValidity('')
+  }
 
   return (
     <>
@@ -41,9 +59,15 @@ function CreateGroup() {
             <span>Go back</span>
           </div>
         </div>
+
+        <StatusMessage
+          isLoading={{ condition: form === 'submiting', message: 'Processing data...' }}
+          isSuccess={{ condition: form === 'success', message: 'Group created succesfully! Redirecting in a moment...' }}
+          isError={{ condition: form === 'failed', message: 'Submition failed, please try again' }}
+        />
         <form action="/" onSubmit={handleSubmit} method="post">
           <label htmlFor="image">Group image
-            <img src={imageblob ? imageblob : ImageIcon} alt="Group image"></img>
+            <img src={imageblob ? imageblob : '/image-upload.svg'} alt="Group image"></img>
           </label>
           <input
             style={{ "display": "none" }}
@@ -59,10 +83,24 @@ function CreateGroup() {
             type="text"
             name="name"
             id="name"
+            className={nameExists.data === true ? "error" : undefined}
             placeholder="Your Unique Group Name"
             maxLength="64"
+            onChange={handleChange}
+            onInvalid={(e) => {
+              nameExists.data === true ? e.target.setCustomValidity('Name is already used') : e.target.setCustomValidity('')
+            }}
+            pattern={nameExists.data === true ? "" : undefined}
             required
           />
+          <StatusMessage
+            isLoading={{ condition: nameExists.isLoading, message: 'Checking for matches...' }}
+            isSuccess={{ condition: nameExists.data === false, message: 'Username is unique' }}
+            isError={{ condition: nameExists.data === true, message: 'Username is already taken' }}
+          />
+
+
+
           <label htmlFor="description">Description</label>
           <textarea
             name="description"

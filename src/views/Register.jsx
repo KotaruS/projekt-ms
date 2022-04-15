@@ -12,13 +12,14 @@ function Register() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { context, setContext } = useContext(UserContext)
+  const [imageblob, setImageBlob] = useState('')
   const [username, setUsername] = useDebouncedState('', 300)
   const [email, setEmail] = useDebouncedState('', 300)
   const [passwords, setPasswords] = useState({ original: '', compare: '' })
   const [match, setMatch] = useState(null)
   const [form, setForm] = useState(false);
-  const nameExists = useQuery(['name', username], checkForExistance, { refetchOnWindowFocus: false, retry: 0, })
-  const emailExists = useQuery(['email', email], checkForExistance, { refetchOnWindowFocus: false, retry: 0, })
+  const nameExists = useQuery(['user', 'name', username], checkForExistance, { refetchOnWindowFocus: false, retry: 0, })
+  const emailExists = useQuery(['user', 'email', email], checkForExistance, { refetchOnWindowFocus: false, retry: 0, })
   const sendData = useMutation(registerUser, {
     onSuccess: (data) => {
       const { token } = data
@@ -48,6 +49,10 @@ function Register() {
     }
   }, [passwords])
 
+  const refreshImage = (e) => {
+    const blob = URL.createObjectURL(e.target.files[0])
+    setImageBlob(blob)
+  }
 
   const validateFormData = data => {
     if (nameExists.status !== 'success' && emailExists.status !== 'success') {
@@ -55,6 +60,7 @@ function Register() {
       console.log(1);
       return null
     }
+    // checks if username and email input is in sync with debounced state
     if (data.name.value !== username || data.email.value !== email) {
       setForm('failed')
       console.log(2);
@@ -64,14 +70,13 @@ function Register() {
       setForm('failed')
       return null
     }
+    const formData = new FormData()
+    formData.append('name', data.name.value)
+    formData.append('email', data.email.value)
+    formData.append('password', data.password.value)
+    formData.append('image', data.image.files[0])
 
-    sendData.mutate({
-      name: data.name.value,
-      email: data.email.value,
-      password: data.password.value,
-    })
-
-    // checks if username and email input is in sync with debounced state
+    sendData.mutate(formData)
   }
 
   const handleChange = ({ target }) => {
@@ -96,7 +101,6 @@ function Register() {
     validateFormData(e.target)
   }
 
-
   return (
     <>
       <div className="form-modal">
@@ -113,6 +117,18 @@ function Register() {
           isError={{ condition: form === 'failed', message: 'Registration failed, please try again' }}
         />
         <form action="/" onSubmit={handleSubmit} method="post">
+          <label htmlFor="image">Group image
+            <img src={imageblob ? imageblob : '/image-upload.svg'} alt="Group image"></img>
+          </label>
+          <input
+            style={{ "display": "none" }}
+            type="file"
+            name="image"
+            id="image"
+            accept="image/*"
+            onChange={refreshImage}
+            placeholder="Your a"
+          />
           <label htmlFor="name">Username</label>
           <input
             type="text"

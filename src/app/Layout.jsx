@@ -61,24 +61,22 @@ function Layout() {
         <nav className="side-nav">
           {user.isSuccess && (
             <>
-              <Link to={`/user/${user.data.uri}`} title="Go to your profile" className="profile">
-                <img className="profile-image" src={`/cdn/tm.svg`} alt="" />
-                <h4>{user.data.name}</h4>
+              <Link to={`/user/${user.data?.uri}`} title="Go to your profile" className="profile">
+                <img className="profile-image" src={user.data?.image} alt="" />
+                <h4>{user.data?.name}</h4>
               </Link>
               <div>
 
                 <FaShapes className="icon" /><h4>Groups</h4>
               </div>
-
-
+              <ul>
+                {user.data?.groups.map(({ uri, name }) => (
+                  <li key={uri}><Link to={`/group/${uri}`}>{name}</Link></li>
+                ))
+                }
+              </ul>
             </>
           )}
-          <ul>
-            <li><Link to='/'>Group 1</Link></li>
-            <li><Link to='/'>Group 2</Link></li>
-            <li><Link to='/'>Group 3</Link></li>
-            <li><Link to='/'>Group 4</Link></li>
-          </ul>
         </nav>
         <div className="feed">
           <Outlet />
