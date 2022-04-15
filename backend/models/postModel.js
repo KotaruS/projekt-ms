@@ -4,7 +4,8 @@ const commentSchema = require('./commentModel')
 const postSchema = mongoose.Schema({
   title: {
     type: String,
-    required: [true, 'Please enter all values']
+    required: [true, 'Please enter all values'],
+    maxLength: 128,
   },
   content: {
     type: String,

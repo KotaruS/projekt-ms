@@ -419,6 +419,23 @@
   margin: 1em 0 0 0;
 }
 
+.form-modal form select {
+  outline: none;
+  font-size: 1em;
+  border: 2px solid transparent;
+  padding: .5rem .25rem;
+  border-bottom: 2px solid rgb(var(--teal));
+  border-radius: var(--radius);
+  color: rgb(var(--color-fg-accent));
+  background: rgb(var(--teal-light), 20%);
+  margin: 0 0 1em 0;
+  transition: var(--def-tran);
+}
+
+.form-modal form select::placeholder {
+  color: red;
+}
+
 .form-modal form input {
   outline: none;
   font-size: 1em;
