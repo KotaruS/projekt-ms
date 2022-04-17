@@ -44,7 +44,10 @@ const editComment = asyncHandler(async (req, res) => {
 // @route DELETE api/comments/:uri
 // @access Private
 const deleteComment = asyncHandler(async (req, res) => {
-  const post = await Post.updateOne({ comments: req.params.id }, { $pull: { comments: req.params.id } })
+
+
+  const post = await Post.updateOne({ $and: [{ 'comments._id': req.params?.id }, { '$comments.author': req.token?.id }] }, { $pull: { 'comments': { '_id': req.params.id } } })
+  console.log(post);
   res.status(200).json({
     message: `Deleted comment with ID ${req.params.id}`
   })

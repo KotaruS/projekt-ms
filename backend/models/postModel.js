@@ -11,9 +11,10 @@ const postSchema = mongoose.Schema({
     type: String,
     required: [true, 'You must provide content']
   },
+  image: String,
   uri: {
     type: String,
-    required: [true, 'You must generate uri'],
+    required: [true, 'Every post must have unique uri'],
     unique: true
   },
   author: {

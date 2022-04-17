@@ -24,14 +24,89 @@ const createGroup = async (data) => {
 }
 
 // post requests 
-const getPosts = async () => {
+const createPost = async (data) => {
   try {
-    const res = await fetch(`${API_URL}/posts/dev`)
+    const res = await fetch(`${API_URL}/posts/create`, {
+      method: 'POST',
+      headers: getConfig(),
+      body: data,
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+const getPosts = async ({ queryKey }) => {
+  try {
+    const [_key, key, value] = queryKey
+    const query = (key && value) ? `/?${key}=${value}` : ''
+    const res = await fetch(`${API_URL}/posts${query}`, {
+      headers: getConfig(),
+    })
     const post = await res.json()
     if (!res.ok) {
       throw post.message
     }
     return post
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+
+const deletePost = async ({ uri }) => {
+  try {
+    const res = await fetch(`${API_URL}/posts/${uri}`, {
+      method: 'DELETE',
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+// comment requests
+const createComment = async ({ uri, data }) => {
+  try {
+    const res = await fetch(`${API_URL}/comments/${uri}/create`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        ...getConfig()
+      },
+      body: JSON.stringify(data),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+const deleteComment = async ({ uri }) => {
+  try {
+    const res = await fetch(`${API_URL}/comments/${uri}`, {
+      method: 'DELETE',
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
   } catch (err) {
     throw new Error(err)
   }
@@ -55,16 +130,6 @@ const registerUser = async (data) => {
   }
 }
 
-const checkForExistance = async ({ queryKey }) => {
-  try {
-    const [route, key, value] = queryKey
-    if (value === '') { return }
-    const exists = await fetch(`${API_URL}/${route}s/?${key}=${value}`)
-    return exists.json()
-  } catch (err) {
-    throw new Error(err)
-  }
-}
 
 const loginUser = async (data) => {
   try {
@@ -104,37 +169,42 @@ const getUser = async ({ queryKey }) => {
 }
 
 
-// const getUserGroups = async () => {
-//   try {
-//     const res = await fetch(`${API_URL}/posts/dev`)
-//     return res.json()
-//   } catch (err) {
-//     throw new Error(err)
-//   }
-// }
-
-
-const createPost = async () => {
+// universal requests
+const getDataFromURI = async ({ queryKey }) => {
   try {
-    const posts = await fetch(`${API_URL}/posts/create`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        ...getConfig(),
-      },
-      body: {},
-    })
-    return posts.json()
+    const [_key, uri] = queryKey
+    const res = await fetch(`${API_URL}/${_key}s/${uri}`)
+    const data = await res.json()
+    if (!res.ok) {
+      throw data.message
+    }
+    return data
   } catch (err) {
     throw new Error(err)
   }
 }
+
+const checkForExistance = async ({ queryKey }) => {
+  try {
+    const [route, key, value] = queryKey
+    if (value === '') { return }
+    const exists = await fetch(`${API_URL}/${route}s/?${key}=${value}`)
+    return exists.json()
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 export {
+  createGroup,
   createPost,
+  createComment,
   getPosts,
   getUser,
-  createGroup,
-  registerUser,
   loginUser,
+  registerUser,
+  deleteComment,
+  deletePost,
   checkForExistance,
+  getDataFromURI,
 }

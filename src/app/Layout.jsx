@@ -7,7 +7,7 @@ import {
   FaSignInAlt,
   FaRegPlusSquare,
   FaShapes,
-} from 'react-icons/fa'
+} from "react-icons/fa"
 import { useQuery } from "react-query"
 import { getUser } from "../lib/api"
 
@@ -62,11 +62,10 @@ function Layout() {
           {user.isSuccess && (
             <>
               <Link to={`/user/${user.data?.uri}`} title="Go to your profile" className="profile">
-                <img className="profile-image" src={user.data?.image} alt="" />
+                <img className="profile-image" src={user.data?.image || '/user-blank.svg'} onError={(e) => e.target.src = '/user-blank.svg'} alt="user image" />
                 <h4>{user.data?.name}</h4>
               </Link>
               <div>
-
                 <FaShapes className="icon" /><h4>Groups</h4>
               </div>
               <ul>
@@ -78,9 +77,7 @@ function Layout() {
             </>
           )}
         </nav>
-        <div className="feed">
-          <Outlet />
-        </div>
+        <Outlet />
       </div>
     </>
   )

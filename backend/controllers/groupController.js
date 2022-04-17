@@ -13,23 +13,21 @@ const path = require('path')
 const createGroup = asyncHandler(async (req, res) => {
   const { name, description } = req.body
   const user = req.token?.id
+  const image = req.file?.buffer && `data:${req.file.mimetype};base64,${req.file?.buffer.toString('base64')}`
   if (!user || !name) {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Please provide all data.')
   }
   const groupExists = await Group.findOne({ name })
   if (groupExists) {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Group with the same name already exists, use different name.')
   }
   const uri = await generateSlug(2, name, Group)
-  console.log(req.file);
   const group = await Group.create({
     name,
     description,
-    image: req.file ? req.file.filename : '/group-blank.svg',
+    image,
     uri,
     owner: user,
     members: [user]
@@ -42,7 +40,6 @@ const createGroup = asyncHandler(async (req, res) => {
     creator.save()
     res.status(201).json(group)
   } else {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Group could not be create')
   }
@@ -65,7 +62,7 @@ const groupExists = asyncHandler(async (req, res) => {
 // @route GET api/groups/dev
 // @access Dev
 const getGroups = asyncHandler(async (req, res) => {
-  const groups = await Group.find().populate({ path: 'owner', select: '-password' })
+  const groups = await Group.find().populate('owner', '-password')
   res.status(200).json(groups)
 })
 // @desc Gets all data of a group

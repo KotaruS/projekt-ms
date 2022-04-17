@@ -112,3 +112,24 @@ a.buttoner {
   stroke: rgb(var(--pure-color));
   box-shadow: var(--shadow-sm) rgb(var(--color), 40%);
 }
+
+.delete {
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  padding: 0.3rem;
+  margin: 0 .25em;
+  background: rgb(255, 0, 0, 15%);
+  border-radius: calc(var(--radius)/2);
+  fill: rgb(255, 0, 0);
+  stroke: rgb(255, 0, 0);
+  cursor: pointer;
+  transition: var(--def-tran);
+}
+
+.delete:hover {
+  background: rgb(255, 0, 0);
+  box-shadow: var(--shadow-sm) rgb(255, 0, 0, 40%);
+  fill: rgb(var(--pure-color));
+  stroke: rgb(var(--pure-color));
+}

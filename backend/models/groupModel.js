@@ -11,7 +11,7 @@ const groupSchema = mongoose.Schema({
   image: String,
   uri: {
     type: String,
-    required: [true, 'You must generate uri'],
+    required: [true, 'Every group must have unique uri'],
     unique: true,
   },
   owner: {

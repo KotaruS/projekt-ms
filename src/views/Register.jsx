@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react'
-import { IoArrowBack } from 'react-icons/io5'
+import { useState, useEffect, useContext, useRef } from 'react'
+import { IoArrowBack, IoClose } from 'react-icons/io5'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../App'
@@ -17,7 +17,9 @@ function Register() {
   const [email, setEmail] = useDebouncedState('', 300)
   const [passwords, setPasswords] = useState({ original: '', compare: '' })
   const [match, setMatch] = useState(null)
-  const [form, setForm] = useState(false);
+  const [form, setForm] = useState(false)
+  const input = useRef(undefined)
+
   const nameExists = useQuery(['user', 'name', username], checkForExistance, { refetchOnWindowFocus: false, retry: 0, })
   const emailExists = useQuery(['user', 'email', email], checkForExistance, { refetchOnWindowFocus: false, retry: 0, })
   const sendData = useMutation(registerUser, {
@@ -117,14 +119,22 @@ function Register() {
           isError={{ condition: form === 'failed', message: 'Registration failed, please try again' }}
         />
         <form action="/" onSubmit={handleSubmit} method="post">
-          <label htmlFor="image">Group image
+          <label className={imageblob && 'contains'} htmlFor="image">Group image
             <img src={imageblob ? imageblob : '/image-upload.svg'} alt="Group image"></img>
+            <IoClose
+              title="Clear image"
+              onClick={e => {
+                e.preventDefault()
+                input.current.value = null
+                setImageBlob('')
+              }} />
           </label>
           <input
             style={{ "display": "none" }}
             type="file"
             name="image"
             id="image"
+            ref={input}
             accept="image/*"
             onChange={refreshImage}
             placeholder="Your a"

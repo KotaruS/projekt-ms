@@ -4,18 +4,18 @@ const multer = require('multer')
 const { nanoid } = require('nanoid')
 const fs = require('fs')
 
-const multerStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const dir = path.resolve('backend', 'cdn')
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-    cb(null, './backend')
-  },
-  filename: function (req, file, cb) {
-    cb(null, '/cdn/' + nanoid(8) + '_' + file.originalname)
-  }
-})
+// const multerStorage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     const dir = path.resolve('backend', 'cdn')
+//     if (!fs.existsSync(dir)) {
+//       fs.mkdirSync(dir);
+//     }
+//     cb(null, './backend')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, '/cdn/' + nanoid(8) + '_' + file.originalname)
+//   }
+// })
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.split("/")[0] === "image") {
     cb(null, true)
@@ -25,7 +25,7 @@ const multerFilter = (req, file, cb) => {
 }
 
 const upload = multer({
-  storage: multerStorage,
+  storage: multer.memoryStorage(),
   fileFilter: multerFilter
 })
 

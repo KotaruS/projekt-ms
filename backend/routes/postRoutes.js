@@ -10,14 +10,16 @@ const {
   editPost,
   deletePost
 } = require('../controllers/postController')
+const { upload } = require('../middleware/fileMiddleware')
 
 router.get('/dev', devMiddleware, getPosts)
+router.get('/', verifyToken, getPosts)
 
-router.post('/create', requireToken, createPost)
+router.post('/create', requireToken, upload.single('image'), createPost)
 
 router.route('/:uri')
   .get(processURI(Post), verifyToken, returnPost)
-  .put(processURI(Post), requireToken, editPost)
+  .put(processURI(Post), requireToken, upload.single('image'), editPost)
   .delete(processURI(Post), requireToken, deletePost)
 
 module.exports = router

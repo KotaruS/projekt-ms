@@ -27,9 +27,7 @@ router.get('/me', requireToken, getUser)
 router.route('/:uri')
   .get(processURI(User), verifyToken, returnUser)
   .put(processURI(User), requireToken, editUser)
+  .delete(processURI(User), requireToken, deleteUser)
 
-// router.get('/:uri/groups', getUserGroups)
-
-router.delete('/dev/:id', devMiddleware, deleteUser)
 
 module.exports = router

@@ -7,11 +7,13 @@ import Feed from './views/Feed'
 import Logout from './views/Logout'
 import Login from './views/Login'
 import Register from './views/Register'
-import Post from './views/Post'
+import Post from './views/posts/Post'
 import NoMatch from './views/NoMatch'
 import Layout from './app/Layout'
+import User from "./views/User"
 import CreateGroup from "./views/groups/CreateGroup"
 import CreatePost from "./views/posts/CreatePost"
+import Group from "./views/groups/Group"
 
 const queryClient = new QueryClient()
 
@@ -43,16 +45,20 @@ function ForumApp() {
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/post' >
-            <Route path=':postId' element={<Post />} />
+            <Route path=':uri' element={<Post />} />
             <Route path='create' element={<CreatePost />} />
           </Route>
           <Route path='/group' >
+            <Route path=':uri' element={<Group />} />
             <Route path='create' element={<CreateGroup />} />
           </Route>
-          <Route path='/group' element={<Logout />} />
+          <Route path='/user' >
+            <Route path=':uri' element={<User />} />
+          </Route>
           <Route path='/logout' element={<Logout />} />
         </Route>
       </Routes>
+
       {background && (
         <Routes>
           <Route path='/login' element={<Login />} />

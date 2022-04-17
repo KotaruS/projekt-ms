@@ -12,22 +12,20 @@ const generateSlug = require('../services/miscServices')
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body
+  const image = req.file?.buffer && `data:${req.file.mimetype};base64,${req.file?.buffer.toString('base64')}`
 
   if (!name || !email || !password) {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Please enter all fields.')
   }
 
   if (!isEmail(email)) {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Invalid email address')
   }
   // checks if user with email or username exists
   const userExists = await User.findOne({ $or: [{ name }, { email }] })
   if (userExists) {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(400)
     throw new Error('Name or email adress is already used.')
   }
@@ -37,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     email,
-    image: req.file ? req.file.filename : '/user-blank.svg',
+    image,
     password: hashedpassword,
     uri,
   })
@@ -57,7 +55,6 @@ const registerUser = asyncHandler(async (req, res) => {
       token: generateToken(user.id),
     })
   } else {
-    req.file && fs.unlink(path.resolve(req.file.path), () => { })
     res.status(500)
     throw new Error('User could not be created')
   }
@@ -106,23 +103,29 @@ const loginUser = asyncHandler(async (req, res) => {
 const returnUser = asyncHandler(async (req, res) => {
   const { _id: id, name, uri, image, posts, groups, restricted } = req.data
   const token = req.token?.id
+  await req.data.populate('groups', '-image -posts -members')
+
   // user requesting his data gets full data
-  req.data.populate('posts').populate('groups')
-  if (token === id) {
+  if (token == id) {
     res.status(200).json({
-      user: req.data
+      _id: req.data.id,
+      name: req.data.name,
+      email: req.data.email,
+      uri: req.data.uri,
+      image: req.data.image,
+      posts: req.data.posts,
+      groups: req.data.groups,
+      restricted: req.data.restricted,
     })
   }
   res.status(200).json({
-    user: {
-      _id: id,
-      name,
-      image,
-      uri,
-      // only same user can access restricted values
-      posts: (!restricted.posts || token === id) ? posts : [],
-      groups: (!restricted.groups || token === id) ? groups : [],
-    },
+    _id: id,
+    name,
+    image,
+    uri,
+    // only same user can access restricted values
+    posts: (!restricted.posts || token === id) ? posts : [],
+    groups: (!restricted.groups || token === id) ? groups : [],
   })
 
 })
@@ -146,7 +149,7 @@ const userExists = asyncHandler(async (req, res) => {
 // @route GET api/users/me
 // @access Private
 const getUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.token.id).populate('posts').populate('groups')
+  const user = await User.findById(req.token.id).select('-password').populate('posts', '-image -author -group').populate('groups', '-image -posts -members')
   res.status(200).json(user)
 })
 
@@ -203,7 +206,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   const { _id: id, name, posts, groups } = req.data
   const token = req.token?.id
   if (token == id) {
-    const isOwner = await Group.find({ owner: id })
+    const isOwner = await Group.findOne({ 'owner': id })
     if (isOwner) {
       res.status(400)
       throw new Error('You must not own any group to delete an account.')

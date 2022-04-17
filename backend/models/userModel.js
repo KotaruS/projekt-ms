@@ -18,7 +18,7 @@ const userSchema = mongoose.Schema({
   },
   uri: {
     type: String,
-    required: [true, 'You must generate uri'],
+    required: [true, 'Every user must have unique uri'],
     unique: true
   },
   image: String,

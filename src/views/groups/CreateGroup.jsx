@@ -1,8 +1,8 @@
-import { useContext, useState } from "react"
+import { useContext, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
-import { IoArrowBack, IoImage } from "react-icons/io5"
+import { IoArrowBack, IoClose } from "react-icons/io5"
 import { checkForExistance, createGroup } from "../../lib/api"
 import { StatusMessage } from "../../components"
 import { useDebouncedState } from "../../lib/utility"
@@ -10,6 +10,7 @@ import { useDebouncedState } from "../../lib/utility"
 function CreateGroup() {
   const queryClient = useQueryClient()
   const [imageblob, setImageBlob] = useState('')
+  const input = useRef(undefined)
   const [name, setName] = useDebouncedState('', 300)
   const navigate = useNavigate()
   const [form, setForm] = useState('')
@@ -66,17 +67,24 @@ function CreateGroup() {
           isError={{ condition: form === 'failed', message: 'Submition failed, please try again' }}
         />
         <form action="/" onSubmit={handleSubmit} method="post">
-          <label htmlFor="image">Group image
-            <img src={imageblob ? imageblob : '/image-upload.svg'} alt="Group image"></img>
+          <label className={imageblob && 'contains'} htmlFor="image">Group image
+            <img src={imageblob || '/image-upload.svg'} alt="Group image"></img>
+            <IoClose
+              title="Clear image"
+              onClick={e => {
+                e.preventDefault()
+                input.current.value = null
+                setImageBlob('')
+              }} />
           </label>
           <input
             style={{ "display": "none" }}
             type="file"
             name="image"
             id="image"
+            ref={input}
             accept="image/*"
             onChange={refreshImage}
-            placeholder="Your a"
           />
           <label htmlFor="name">Name of the group</label>
           <input

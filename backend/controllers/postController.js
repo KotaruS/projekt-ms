@@ -10,6 +10,7 @@ const generateSlug = require('../services/miscServices')
 const createPost = asyncHandler(async (req, res) => {
   const author = req.token?.id
   const { title, content, group } = req.body
+  const image = req.file?.buffer && `data:${req.file.mimetype};base64,${req.file?.buffer.toString('base64')}`
   const uri = await generateSlug(2, title, Post)
   if (!title || !content || !uri || !group || !author) {
     res.status(400)
@@ -25,6 +26,7 @@ const createPost = asyncHandler(async (req, res) => {
       title,
       content,
       uri,
+      image,
       author,
       group,
     })
@@ -54,25 +56,45 @@ const returnPost = asyncHandler(async (req, res) => {
     res.status(404)
     throw new Error('Post not found')
   }
-  const postGroup = await Group.findOne({ posts: id })
+  const postGroup = await Group.findOne({ posts: id }).select('-pendingMembers -posts -owner')
   const isMemberOfGroup = postGroup.members.indexOf(token) !== -1
   // returns minimal data when group is set to restricted and user is not a member
   if (!postGroup?.restricted || isMemberOfGroup) {
+    await req.data.populate('author', '_id name image uri')
+    req.data.group = postGroup
+    await req.data.populate('comments.author', '_id name uri image')
     res.status(200).json(req.data)
   } else {
     res.status(401).json({
+      message: 'This post is restricted',
       title,
     })
   }
 })
 
-// @desc Gets all posts
-// @route GET api/posts
-// @access Private
+// @desc Gets all posts for feed
+// @route GET api/posts?param <id>
+// @access Public/Private
 const getPosts = asyncHandler(async (req, res) => {
-  // throw new Error("Hey, not to disturb you or anything, but something went wrong.")
-  const posts = await Post.find().populate('author', 'name image uri').populate('group', 'name uri image')
-  res.status(200).json(posts)
+  const token = req.token?.id
+  const { group: groupParam, user: userParam } = req.query
+  if (userParam) {
+    const { _id } = await User.findOne({ 'uri': userParam })
+    const posts = await Post.find({ 'author': _id }).sort({ 'createdAt': -1 }).populate('author', 'name image uri').populate('group', 'name uri image')
+    res.status(200).json(posts)
+  } else if (groupParam) {
+    const { _id } = await Group.findOne({ 'uri': groupParam })
+    const posts = await Post.find({ 'group': _id }).sort({ 'createdAt': -1 }).populate('author', 'name image uri').populate('group', 'name uri image')
+    res.status(200).json(posts)
+  } else if (token) {
+    const { groups } = await User.findById(token)
+    const condition = groups ? { 'group': { $in: groups } } : null
+    const posts = await Post.find(condition).sort({ 'createdAt': -1 }).populate('author', 'name image uri').populate('group', 'name uri image')
+    res.status(200).json(posts)
+  } else {
+    const posts = await Post.find().sort({ 'createdAt': -1 }).limit(30).populate('author', 'name image uri').populate('group', 'name uri image')
+    res.status(200).json(posts)
+  }
 
 })
 
