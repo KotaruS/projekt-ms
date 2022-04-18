@@ -1,18 +1,42 @@
 # Projekt Forum
 
-Projekt je postaven na Reactu s Node.js a MongoDB na backendu.
+## Spuštění
 
-## to be continued...
+**V rootu projektu je nutné provést následující**
+Vytvořit soubor `.env` a v něm definovat:
+```
+NODE_ENV = *developement* nebo *production*
+PORT = libovolný port
+DATABASE_URI = mongodb://localhost/<název databáze> 
+JWT_CODE = <libovolný kód pro zahešování JSON web tokenu>
+```
+Poté v terminálu:
+`npm install` - pro nainstalování npm modulů nutných ke spuštění
+
+Poté se proces mírně liší
+
+### Vývoj
+Je třeba otevřít dva terminály v rootu.
+V prvním spustit příkaz `npm run dev`
+V druhém spustit příkaz `npm run start` a poté stisknout Y
 
 ### Produkce
-npm install && npm run build - pro první spuštění
+Zde stačí jeden terminál, kde:
+Nejprve spustit příkaz `npm run build`
+a poté `npm run server`
 
-poté stačí jen v rootu npm run server
+## Technologie
 
-### developement
+### Backend
+- Node.js
+- MongoDB
+- Mongoose
 
-npm install - pro první spuštění
+### Frontend
+- React
+- React query
+- JavaScript
 
-poté stačí jen v rootu otevřít dva terminály 
-v jednom: npm run dev 
-v druhém: npm run start
+## Live verze
+
+Projekt je dostupný také na https://forumapp.onrender.com
