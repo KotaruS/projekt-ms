@@ -25,13 +25,13 @@ function Feed() {
     }
   }, [location])
 
-
-  const color = { '--color': 'var(--blue)' }
   const postDel = useMutation(deletePost, {
     onSuccess: () => {
       queryClient.invalidateQueries('posts')
     }
   })
+
+  const color = { '--color': 'var(--blue)' }
 
   const handleClick = (e, uri) => {
     postDel.mutate({ uri })
@@ -49,7 +49,7 @@ function Feed() {
               <span>{context.timeFormat.format(new Date(post.createdAt)) + ' | ' + context.dateFormat.format(new Date(post.createdAt))}</span>
             </div>
             {(user?._id == post.author._id) &&
-              <FaTrash title="Delete comment" className="delete" onClick={e => { handleClick(e, post.uri) }} />
+              <FaTrash title="Delete post" className="delete" onClick={e => { handleClick(e, post.uri) }} />
             }
           </div>
           <Link to={`/post/${post.uri}`}><h3>{post.title}</h3>

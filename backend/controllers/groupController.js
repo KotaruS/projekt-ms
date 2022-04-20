@@ -113,7 +113,7 @@ const updateGroupDetails = asyncHandler(async (req, res) => {
 // @access Private
 const joinGroup = asyncHandler(async (req, res) => {
   const { _id: id, name, members, pendingMembers, restricted } = req.data
-  const token = req.token.id
+  const token = req.token?.id
 
   if (members.indexOf(token) !== -1) {
     res.status(400)

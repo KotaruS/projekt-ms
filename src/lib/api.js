@@ -23,6 +23,22 @@ const createGroup = async (data) => {
   }
 }
 
+const joinGroup = async (uri) => {
+  try {
+    const res = await fetch(`${API_URL}/groups/join/${uri}`, {
+      method: 'GET',
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 // post requests 
 const createPost = async (data) => {
   try {
@@ -40,6 +56,7 @@ const createPost = async (data) => {
     throw new Error(err)
   }
 }
+
 
 const getPosts = async ({ queryKey }) => {
   try {
@@ -197,6 +214,7 @@ const checkForExistance = async ({ queryKey }) => {
 
 export {
   createGroup,
+  joinGroup,
   createPost,
   createComment,
   getPosts,

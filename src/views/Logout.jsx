@@ -8,7 +8,7 @@ function Logout() {
 
   useEffect(() => {
     localStorage.removeItem('token')
-    queryClient.invalidateQueries(['user', 'me'])
+    queryClient.resetQueries('user')
     navigate('/')
   }, [])
   return (

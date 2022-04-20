@@ -661,6 +661,40 @@
   margin: 0 0 0 auto;
 }
 
+.button-group {
+  display: block;
+  margin: 0 0 20px 0;
+  padding: 0 20px;
+}
+
+.button-group button {
+  color: rgb(var(--blue));
+  fill: rgb(var(--blue));
+  stroke: rgb(var(--blue));
+  font-size: 1rem;
+  margin: 0 0.5em 0 0;
+  outline: none;
+  border: none;
+  padding: .5em .75em;
+  border-radius: var(--radius);
+  background: rgb(var(--blue), 10%);
+  transition: var(--def-tran);
+  cursor: pointer;
+}
+
+.button-group button svg {
+  vertical-align: text-bottom;
+  margin: 0 0.4em 0 0;
+}
+
+.button-group button:hover {
+  color: rgb(var(--pure-color));
+  stroke: rgb(var(--pure-color));
+  fill: rgb(var(--pure-color));
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 30%);
+  background: rgb(var(--blue));
+}
+
 .post-card .header .item img {
   width: 25px;
   height: 25px;

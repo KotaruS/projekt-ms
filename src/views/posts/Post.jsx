@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
 import {
   FaCalendar,
@@ -8,17 +8,23 @@ import {
   FaShapes,
   FaTrash,
 } from "react-icons/fa"
-import { getDataFromURI, getUser, createComment, deleteComment } from "../../lib/api"
+import { getDataFromURI, getUser, createComment, deleteComment, deletePost } from "../../lib/api"
 import { useContext } from "react"
 
 function Post() {
   const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const { uri } = useParams()
+  const navigate = useNavigate()
   const post = useQuery(['post', uri], getDataFromURI)
   const { data: user } = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
+  })
+  const postDel = useMutation(deletePost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('posts')
+    }
   })
 
   const sendComment = useMutation(createComment, {
@@ -43,7 +49,8 @@ function Post() {
     e.target.comment.value = ''
   }
   const handleClick = (e, uri) => {
-    deleteCom.mutate({ uri })
+    postDel.mutate({ uri })
+    navigate('/')
   }
 
   return post.isSuccess && (
@@ -63,6 +70,9 @@ function Post() {
             <FaCalendar className="icon" />
             <span>{context.dateFormat.format(new Date(post.data.updatedAt))}</span>
           </div>
+          {(user?._id === post.data.author._id) &&
+            <FaTrash title="Delete comment" className="delete" onClick={e => handleClick(e, post.data.uri)} />
+          }
         </div>
         <div className="body">
           <h2>{post.data.title}</h2>
@@ -80,17 +90,19 @@ function Post() {
           </div>
         </div>
         <div className="comments">
-          <form action="/" onSubmit={handleSubmit} method="post">
-            <img src={post.data.author.image || '/user-blank.svg'} alt={post.data.author.naem} />
-            <textarea
-              name="comment"
-              id="comment"
-              placeholder="Write your thoughts..."
-              rows={4}
-              required
-            />
-            <button type="submit"><FaPaperPlane /></button>
-          </form>
+          {user && (
+            <form action="/" onSubmit={handleSubmit} method="post">
+              <img src={user?.image || '/user-blank.svg'} alt={post.data.author.naem} />
+              <textarea
+                name="comment"
+                id="comment"
+                placeholder="Write your thoughts..."
+                rows={4}
+                required
+              />
+              <button type="submit"><FaPaperPlane /></button>
+            </form>
+          )}
           {post.data.comments.map(comment => (
             <div className="comment" key={comment.content} style={color2}>
               <div className="header">
@@ -103,7 +115,7 @@ function Post() {
                   <span>{context.timeFormat.format(new Date(comment.updatedAt)) + ' | ' + context.dateFormat.format(new Date(comment.updatedAt))}</span>
                 </div>
                 {(comment.author._id == user?._id) &&
-                  <FaTrash title="Delete comment" className="delete" onClick={e => { handleClick(e, comment._id) }} />
+                  <FaTrash title="Delete comment" className="delete" onClick={e => deleteCom.mutate({ uri: comment._id })} />
                 }
               </div>
               <p>
