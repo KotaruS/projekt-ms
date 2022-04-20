@@ -17,7 +17,6 @@ function User() {
   const { context, setContext } = useContext(UserContext)
   const { data: user, isSuccess } = useQuery(['profile', uri], getUser, {
     retry: 1,
-    enabled: !!context.token
   })
 
   return isSuccess && (

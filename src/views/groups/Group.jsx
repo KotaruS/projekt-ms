@@ -10,7 +10,12 @@ function Group() {
   const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const { uri } = useParams()
-  const joinG = useMutation(joinGroup)
+  const joinG = useMutation(joinGroup, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('group')
+      queryClient.invalidateQueries(['user', 'me'])
+    }
+  })
   const group = useQuery(['group', uri], getDataFromURI)
   const user = useQuery(['user', 'me'], getUser, {
     retry: 1,
