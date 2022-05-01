@@ -14,16 +14,18 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.use('/api/status', (req, res) => res.status(200).send('Running...'))
+app.use('/api/status', (req, res) => res.status(200).send('Server is up'))
 app.use('/api/echo', devMiddleware, (req, res) => res.status(200).send(req.body))
 
-app.use(express.static(path.join(__dirname, '../build')))
 app.use('/cdn', express.static(path.resolve('backend', 'cdn')))
 
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/posts', require('./routes/postRoutes'))
 app.use('/api/groups', require('./routes/groupRoutes'))
 app.use('/api/comments', require('./routes/commentRoutes'))
+
+app.use(express.static(path.join(__dirname, '../build')))
+app.get('*', (req, res) => res.sendFile('index.html', { root: path.resolve('./build') }))
 
 app.use(errorHandler)
 

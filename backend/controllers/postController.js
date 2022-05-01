@@ -80,19 +80,32 @@ const getPosts = asyncHandler(async (req, res) => {
   const { group: groupParam, user: userParam } = req.query
   if (userParam) {
     const { _id } = await User.findOne({ 'uri': userParam })
-    const posts = await Post.find({ 'author': _id }).sort({ 'createdAt': -1 }).populate('author', 'name image uri').populate('group', 'name uri image')
+    const posts = await Post.find({ 'author': _id })
+      .sort({ 'createdAt': -1 })
+      .populate('author', 'name uri')
+      .populate('group', 'name uri')
     res.status(200).json(posts)
   } else if (groupParam) {
     const { _id } = await Group.findOne({ 'uri': groupParam })
-    const posts = await Post.find({ 'group': _id }).sort({ 'createdAt': -1 }).populate('author', 'name image uri').populate('group', 'name uri image')
+    const posts = await Post.find({ 'group': _id })
+      .sort({ 'createdAt': -1 })
+      .populate('author', 'name uri')
+      .populate('group', 'name uri')
     res.status(200).json(posts)
   } else if (token) {
     const { groups } = await User.findById(token)
     const condition = groups ? { 'group': { $in: groups } } : null
-    const posts = await Post.find(condition).sort({ 'createdAt': -1 }).populate('author', 'name image uri').populate('group', 'name uri image')
+    const posts = await Post.find(condition)
+      .sort({ 'createdAt': -1 })
+      .populate('author', 'name uri')
+      .populate('group', 'name uri')
     res.status(200).json(posts)
   } else {
-    const posts = await Post.find().sort({ 'createdAt': -1 }).limit(30).populate('author', 'name image uri').populate('group', 'name uri image')
+    const posts = await Post.find({ restricted: false })
+      .sort({ 'createdAt': -1 })
+      .limit(30)
+      .populate('author', 'name uri')
+      .populate('group', 'name uri')
     res.status(200).json(posts)
   }
 

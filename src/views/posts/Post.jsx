@@ -57,16 +57,17 @@ function Post() {
     <div className="detail">
       <div className="post-card" >
         <div className="header">
+          <div className="label">By</div>
           <Link className="buttoner item" style={color} to={`/user/${post.data.author.uri}`}>
-            <img src="/user-blank.svg" />
+            <img src={post.data.author.image || "/user-blank.svg"} alt="user icon" />
             {post.data.author.name}
           </Link>
-          <div>in </div>
+          <div className="label">in</div>
           <Link className="buttoner item" style={color} to={`/group/${post.data.group.uri}`}>
-            <img src="/group-blank.svg" />
+            <img src={post.data.group.image || "/group-blank.svg"} alt="group icon" />
             {post.data.group.name}
           </Link>
-          <div className="icon-group" style={color}>
+          <div className="icon-group" style={color2}>
             <FaCalendar className="icon" />
             <span>{context.dateFormat.format(new Date(post.data.updatedAt))}</span>
           </div>
