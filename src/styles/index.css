@@ -10,7 +10,7 @@
   margin: 0;
   /* pure rgb values so I can change transparency */
   --pure-color: 255, 255, 255;
-  --color-bg: 255, 250, 249;
+  --color-bg: 254, 250, 253;
   --color-fg: 24, 24, 26;
   --color-fg-accent: 71, 71, 83;
   --purple-dark: 98, 19, 140;
@@ -118,7 +118,7 @@ a.buttoner {
   width: 1.5em;
   height: 1.5em;
   padding: 0.3rem;
-  margin: 0 .25em;
+  margin: 0 0 0 .25em;
   background: rgb(255, 0, 0, 15%);
   border-radius: calc(var(--radius)/2);
   fill: rgb(255, 0, 0);
@@ -132,4 +132,109 @@ a.buttoner {
   box-shadow: var(--shadow-sm) rgb(255, 0, 0, 40%);
   fill: rgb(var(--pure-color));
   stroke: rgb(var(--pure-color));
+}
+
+.edit {
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  padding: 0.3rem;
+  margin: 0 0 0 .25em;
+  background: rgb(var(--blue-light), 60%);
+  border-radius: calc(var(--radius)/2);
+  fill: rgb(var(--blue));
+  stroke: rgb(var(--blue));
+  cursor: pointer;
+  transition: var(--def-tran);
+}
+
+.edit:hover {
+  background: rgb(var(--blue));
+  box-shadow: var(--shadow-sm) rgb(var(--blue-dark), 20%);
+  fill: rgb(var(--pure-color));
+  stroke: rgb(var(--pure-color));
+}
+
+.no-match {
+  margin: 0 auto;
+  width: 800px;
+  background: rgb(var(--pure-color));
+  z-index: 6;
+}
+
+.no-match h1 {
+  font-size: 5em;
+  font-weight: 800;
+  background: linear-gradient(170deg, rgb(var(--purple)), rgb(var(--blue)));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}
+
+.no-match h2 {
+  font-size: 1.7em;
+  font-weight: 600;
+  color: rgb(var(--blue-dark));
+}
+
+.no-match p {
+  font-size: 1.5em;
+  font-weight: 500;
+  color: rgb(var(--blue-dark));
+  margin: .5em 0;
+}
+
+.no-match a {
+  font-size: 1.5em;
+  font-weight: 500;
+  color: rgb(var(--blue-dark), 80%);
+  margin: .5em 0;
+  text-decoration: none;
+  transition: var(--def-tran);
+  position: relative;
+}
+
+.no-match a sup {
+  font-size: 0.5em;
+  color: rgb(var(--blue-dark), 40%);
+}
+
+.no-match a::before {
+  content: "►";
+  position: absolute;
+  top: 50%;
+  left: -1.2em;
+  color: rgb(var(--teal));
+  font-size: 0.5em;
+  transform: translateY(-35%);
+  font-weight: 700;
+  transition: var(--def-tran);
+}
+
+.no-match a:hover {
+  color: rgb(var(--blue));
+}
+
+.no-match a:hover::before {
+  color: rgb(var(--purple-light));
+  transform: translateY(-35%) scale(1.3);
+}
+
+.blur-background {
+  position: fixed;
+  left: 0;
+  top: 0;
+  min-width: 100%;
+  min-height: 100%;
+  cursor: pointer;
+  z-index: 4;
+  background: rgb(var(--pure-color), 80%);
+}
+
+@supports (backdrop-filter: blur(2px)) {
+  .blur-background {
+    backdrop-filter: blur(5px);
+    background: rgb(var(--pure-color), 80%);
+
+  }
 }

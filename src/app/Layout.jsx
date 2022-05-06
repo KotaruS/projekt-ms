@@ -19,10 +19,11 @@ function Layout() {
     enabled: !!context.token
   })
 
-  // const userGroups = useQuery('userGroups', getUserGroups)
   const location = useLocation()
   const color = { '--color': 'var(--purple)' }
-
+  const handleScroll = e => {
+    console.log("aeea");
+  }
 
   return (
     <>
@@ -57,8 +58,8 @@ function Layout() {
           }
         </ul>
       </nav>
-      <div className="page-content">
-        <nav className="side-nav">
+      <div className="page-content" >
+        <nav className="side-nav" >
           {user.isSuccess && (
             <>
               <Link to={`/user/${user.data?.uri}`} title="Go to your profile" className="profile">
@@ -74,8 +75,8 @@ function Layout() {
                 ))
                 }
               </ul>
-            </>
-          )}
+            </>)
+          }
         </nav>
         <Outlet />
       </div>

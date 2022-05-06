@@ -5,7 +5,7 @@ import {
   FaCalendar,
   FaCommentAlt,
   FaPaperPlane,
-  FaShapes,
+  FaPen,
   FaTrash,
 } from "react-icons/fa"
 import { getDataFromURI, getUser, createComment, deleteComment, deletePost } from "../../lib/api"
@@ -16,7 +16,14 @@ function Post() {
   const queryClient = useQueryClient()
   const { uri } = useParams()
   const navigate = useNavigate()
-  const post = useQuery(['post', uri], getDataFromURI)
+  const post = useQuery(['post', uri], getDataFromURI, {
+    retry: 0,
+    onError: (error) => {
+      if (error.message === "Invalid URL address") {
+        navigate('/404')
+      }
+    }
+  })
   const { data: user } = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
@@ -57,20 +64,25 @@ function Post() {
     <div className="detail">
       <div className="post-card" >
         <div className="header">
-          <div className="label">By</div>
-          <Link className="buttoner item" style={color} to={`/user/${post.data.author.uri}`}>
-            <img src={post.data.author.image || "/user-blank.svg"} alt="user icon" />
-            {post.data.author.name}
-          </Link>
-          <div className="label">in</div>
+          <div className="label">In</div>
           <Link className="buttoner item" style={color} to={`/group/${post.data.group.uri}`}>
             <img src={post.data.group.image || "/group-blank.svg"} alt="group icon" />
             {post.data.group.name}
           </Link>
-          <div className="icon-group" style={color2}>
+          <div className="label">by</div>
+          <Link className="buttoner item" style={color} to={`/user/${post.data.author.uri}`}>
+            <img src={post.data.author.image || "/user-blank.svg"} alt="user icon" />
+            {post.data.author.name}
+          </Link>
+          <div className="icon-group" style={color}>
             <FaCalendar className="icon" />
             <span>{context.dateFormat.format(new Date(post.data.updatedAt))}</span>
           </div>
+          {(user?._id === post.data.author._id) &&
+            <Link to="edit">
+              <FaPen title="Edit post" className="edit" />
+            </Link>
+          }
           {(user?._id === post.data.author._id) &&
             <FaTrash title="Delete comment" className="delete" onClick={e => handleClick(e, post.data.uri)} />
           }

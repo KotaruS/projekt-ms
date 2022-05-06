@@ -90,12 +90,18 @@ const returnGroup = asyncHandler(async (req, res) => {
 const updateGroupDetails = asyncHandler(async (req, res) => {
   const { name, uri, owner, } = req.data
   const token = req.token?.id
+  const image = req.file?.buffer && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}` || ''
   req.body.uri = (name === req.body.name || !req.body.name) ? uri : await generateSlug(2, req.body.name, Group)
+
   try {
     if (token == owner) {
       // update only certain values to avoid overwriting members / posts list with bad request
-      ['name', 'description', 'image', 'uri', 'restricted'].forEach(
-        (key) => req.data[key] = req.body[key] || req.data[key])
+      ['name', 'description', 'image', 'uri', 'restricted'].forEach((key) => {
+        req.data[key] = req.body[key] || req.data[key]
+        if (key === 'image') {
+          req.data[key] = image
+        }
+      })
       await req.data.save()
       res.status(200).json(req.data)
     } else {

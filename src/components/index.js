@@ -1,8 +1,13 @@
-import { IoSync, IoCheckmarkCircleOutline } from 'react-icons/io5'
+import { IoSync, IoCheckmarkCircleOutline, IoInformationCircleOutline } from 'react-icons/io5'
 
-function StatusMessage({ isLoading, isSuccess, isError }) {
+function StatusMessage({ isInfo, isLoading, isSuccess, isError }) {
   return (
     <div>
+      {isInfo?.condition &&
+        <span className='form-msg'>
+          <IoInformationCircleOutline className='msg-icon' />
+          {isInfo?.message}
+        </span>}
       {isLoading?.condition &&
         <span className='form-msg '>
           <IoSync className='msg-icon spin' />
@@ -19,4 +24,5 @@ function StatusMessage({ isLoading, isSuccess, isError }) {
     </div>
   )
 }
+
 export { StatusMessage }

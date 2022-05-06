@@ -1,22 +1,31 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
-import { getDataFromURI, getUser, createComment, deleteComment, joinGroup } from "../../lib/api"
+import { getDataFromURI, getUser, joinGroup } from "../../lib/api"
 import { useContext } from "react"
 import Feed from "../Feed"
-import { FaUsers, FaUserPlus } from "react-icons/fa"
+import { FaUsers, FaUserPlus, FaPen, FaGhost } from "react-icons/fa"
+import { contains } from "../../lib/utility"
 
 function Group() {
   const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const { uri } = useParams()
+  const navigate = useNavigate()
   const joinG = useMutation(joinGroup, {
     onSuccess: () => {
       queryClient.invalidateQueries('group')
       queryClient.invalidateQueries(['user', 'me'])
     }
   })
-  const group = useQuery(['group', uri], getDataFromURI)
+  const group = useQuery(['group', uri], getDataFromURI, {
+    retry: 0,
+    onError: (error) => {
+      if (error.message === "Invalid URL address") {
+        navigate('/404')
+      }
+    }
+  })
   const user = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
@@ -40,13 +49,24 @@ function Group() {
           </div>
         </div>
       </div>
-      {user.isSuccess && (
-        <div className="button-group">
+      <div className="button-group">
+        {user.isSuccess && group.isSuccess && (!contains(user?.data?._id, group?.data?.members)) && (
           <button onClick={() => joinG.mutate(group.data?.uri)}><FaUserPlus />Join group</button>
-        </div>
-      )}
-      <Feed />
-
+        )}
+        {user.isSuccess && (user?.data?._id === group?.data?.owner) && (
+          <Link to="edit" >
+            <button><FaPen />Edit group</button>
+          </Link>
+        )}
+      </div>
+      {group?.data?.posts?.length !== 0 ? <Feed />
+        : <div className="problem-card">
+          <FaGhost />
+          <div>
+            <h4>It seems there are no posts</h4>
+            <p>just this friendly ghost...</p>
+          </div>
+        </div>}
     </div>
   )
 }

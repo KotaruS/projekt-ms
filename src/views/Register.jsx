@@ -36,7 +36,7 @@ function Register() {
     }
   })
 
-  const color = { '--color': 'var(--blue)' }
+  const color = { '--color': 'var(--purple)' }
 
   const handleClick = () => {
     navigate(-1)

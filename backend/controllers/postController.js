@@ -117,11 +117,16 @@ const getPosts = asyncHandler(async (req, res) => {
 const editPost = asyncHandler(async (req, res) => {
   const { title, author, uri } = req.data
   req.body.uri = (title === req.body.title || !req.body.title) ? uri : await generateSlug(2, req.body.title, Post)
+  const image = req.file?.buffer && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}` || ''
   const token = req.token?.id
   try {
     if (token == author) {
-      ['title', 'content', 'uri', 'restricted'].forEach(
-        (key) => req.data[key] = req.body[key] || req.data[key])
+      ['title', 'content', 'uri', 'restricted', 'image'].forEach((key) => {
+        req.data[key] = req.body[key] || req.data[key]
+        if (key === 'image') {
+          req.data[key] = image
+        }
+      })
       await req.data.save()
       res.status(200).json(req.data)
     } else {

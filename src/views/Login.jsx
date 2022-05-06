@@ -24,7 +24,7 @@ function Login() {
   const handleClick = (event) => {
     navigate(-1)
   }
-  const color = { '--color': 'var(--blue)' }
+  const color = { '--color': 'var(--purple)' }
 
   const handleSubmit = e => {
     e.preventDefault()

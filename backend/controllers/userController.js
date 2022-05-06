@@ -117,16 +117,17 @@ const returnUser = asyncHandler(async (req, res) => {
       groups: req.data.groups,
       restricted: req.data.restricted,
     })
+  } else {
+    res.status(200).json({
+      _id: id,
+      name,
+      image,
+      uri,
+      // only same user can access restricted values
+      posts: (!restricted.posts || token === id) ? posts : [],
+      groups: (!restricted.groups || token === id) ? groups : [],
+    })
   }
-  res.status(200).json({
-    _id: id,
-    name,
-    image,
-    uri,
-    // only same user can access restricted values
-    posts: (!restricted.posts || token === id) ? posts : [],
-    groups: (!restricted.groups || token === id) ? groups : [],
-  })
 
 })
 

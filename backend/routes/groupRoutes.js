@@ -20,6 +20,6 @@ router.post('/create', requireToken, upload.single('image'), createGroup)
 router.get('/join/:uri', processURI(Group), requireToken, joinGroup)
 router.route('/:uri')
   .get(processURI(Group), verifyToken, returnGroup)
-  .put(processURI(Group), requireToken, updateGroupDetails)
+  .put(processURI(Group), upload.single('image'), requireToken, updateGroupDetails)
   .delete(processURI(Group), requireToken, deleteGroup)
 module.exports = router

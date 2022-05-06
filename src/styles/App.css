@@ -3,7 +3,7 @@
   background: rgb(var(--pure-color));
   box-shadow: var(--shadow) rgba(88, 9, 69, 0.098);
   display: flex;
-  position: relative;
+  position: fixed;
   width: 100%;
   padding: 5px;
   justify-content: space-between;
@@ -84,6 +84,11 @@
   background: rgb(var(--color-bg));
 }
 
+.page-content>div,
+.page-content>nav {
+  margin-top: 50px;
+}
+
 .feed {
   display: flex;
   flex-direction: column;
@@ -105,14 +110,14 @@
   max-height: 100%;
   background: linear-gradient(90deg,
       rgb(var(--teal-light)) -100%,
-      rgb(var(--color-bg)) 80%);
+      transparent 80%);
   display: flex;
   top: 0;
   position: fixed;
   width: 500px;
   max-width: 20vw;
   flex-direction: column;
-  padding: 55px 20px 5px 20px;
+  padding: 5px 20px 5px 20px;
 }
 
 .side-nav .profile {
@@ -196,55 +201,27 @@
   display: flex;
   background: rgb(var(--pure-color));
   flex-direction: column;
-  box-shadow: var(--shadow-full);
-  border: 3px solid transparent;
+  box-shadow: var(--shadow-sm) rgb(var(--color-fg-accent), 10%);
+  border: 1px solid rgb(var(--purple), 20%);
   margin: 10px 0;
   padding: 10px;
+  overflow: hidden;
   border-radius: var(--radius);
   transition: var(--def-tran);
 }
 
 .post-feed-card:hover {
-  border: 3px solid rgb(var(--blue), 10%);
-}
-
-.post-feed-card>a {
-  color: rgb(var(--color-bg-accent));
-  text-decoration: none;
-}
-
-.post-feed-card h3 {
-  font-family: var(--fonts);
-  color: rgb(var(--purple));
-  font-weight: 600;
-  font-size: 2rem;
-  margin: .3rem 0 0 0;
-}
-
-.post-feed-card .content {
-  padding: 0.5rem 0;
-  margin: 0.25rem 0;
-}
-
-.post-feed-card .content img {
-  display: block;
-  color: rgb(var(--purple-dark));
-  width: 99vw;
-  max-width: 100%;
-  height: auto;
-  max-height: 250px;
-  object-fit: cover;
-  margin: .5em 0 0 0;
-  border-radius: var(--radius);
-  background: rgb(var(--teal), 10%);
-  transition: var(--def-tran);
-  cursor: pointer;
+  box-shadow: var(--shadow) rgb(var(--color-fg-accent), 10%);
 }
 
 .post-info {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  background: rgb(var(--blue-light), 7%);
+  margin: -10px -10px 0 -10px;
+  padding: 5px 10px;
+  border-bottom: 1px solid rgb(var(--blue), 20%);
 }
 
 .post-info .icon-group {
@@ -263,17 +240,84 @@
   background: rgb(var(--color), 10%);
 }
 
-
 .post-info div {
   font-size: 0.9rem;
   color: rgb(var(--color-fg-accent));
 }
 
-.post-info .buttoner {
+.post-info .linker {
   color: rgb(var(--blue));
-  font-size: 1rem;
-  margin: 0 0.5em 0 0;
+  font-weight: 600;
+  margin: .25em;
+  text-decoration: none;
+  transition: var(--def-tran);
+  position: relative;
 }
+
+.post-info .linker::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(to left, transparent 50%, rgb(var(--blue)) 80%, rgb(var(--purple)));
+  background-position: 100% 0;
+  background-size: 400% 200%;
+  border-radius: calc(var(--radius)/2);
+  font-weight: 600;
+  transition: background-position 1s cubic-bezier(0.1, -0.03, 0.2, 0.92);
+}
+
+.post-info .linker:hover::after {
+  background-position: 0 0;
+}
+
+.post-feed-card>a {
+  color: rgb(var(--color-bg-accent));
+  text-decoration: none;
+}
+
+.post-feed-card h3 {
+  font-family: var(--fonts);
+  color: rgb(var(--purple));
+  font-weight: 600;
+  font-size: 2rem;
+  margin: .3rem 0 0 0;
+}
+
+.post-feed-card .content {
+  padding: 0.5rem 0;
+  line-height: 1.5em;
+  color: rgb(var(--color-fg-accent));
+  position: relative;
+}
+
+.post-feed-card .content.excerpt::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 3px;
+  left: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgb(var(--pure-color)));
+}
+
+.post-feed-card .content img {
+  display: block;
+  color: rgb(var(--purple-dark));
+  width: 99vw;
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: cover;
+  margin: .5em 0 0 0;
+  border-radius: var(--radius);
+  background: rgb(var(--teal), 10%);
+  transition: var(--def-tran);
+  cursor: pointer;
+}
+
 
 .post-feed-card .tools {
   font-size: 0.9rem;
@@ -318,7 +362,7 @@
 
 .form-modal {
   position: absolute;
-  padding: 2rem 2.5rem;
+  padding: 1rem 1.5rem;
   background: rgb(var(--pure-color));
   left: 50vw;
   top: 50px;
@@ -330,6 +374,8 @@
   transform: translateX(-50%);
   box-shadow: var(--shadow-full);
   border-radius: var(--radius);
+  border: 1px solid rgb(var(--purple), 20%);
+  overflow: auto;
   z-index: 9;
 }
 
@@ -353,11 +399,20 @@
 
 .form-modal .header {
   display: flex;
+  margin: -1rem -1.5rem 1rem -1.5rem;
+  padding: .9rem 1.5rem 0 1.5rem;
+  border-bottom: 1px solid rgb(var(--purple), 20%);
+  background-color: rgb(var(--purple-light), 20%);
 }
 
 .form-modal .header .icon-group {
-  margin: .25em 0 auto auto;
+  margin: 0 0 auto auto;
   cursor: pointer;
+}
+
+.form-modal .header .icon-group span {
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .form-modal .header .icon-group:hover {
@@ -373,7 +428,7 @@
 }
 
 .form-modal .header h3 {
-  font-size: 2rem;
+  font-size: 1.7rem;
   display: inline;
   font-weight: 700;
   margin: 0 0 .5em 0;
@@ -393,7 +448,7 @@
   align-self: baseline;
   color: rgb(var(--purple-dark));
   font-weight: 500;
-  padding: 1em 0 .75em 0;
+  padding: 1em 0 .35em 0;
 }
 
 .form-modal form label img {
@@ -403,10 +458,10 @@
   max-width: 100%;
   height: 150px;
   object-fit: cover;
-  margin: 1em 0 0 0;
-  border-radius: calc(var(--radius)*2);
-  background: rgb(var(--teal), 10%);
-  box-shadow: var(--shadow) rgb(var(--teal-dark), 25%);
+  margin: .5em 0 .85em 0;
+  border-radius: var(--radius);
+  background: rgb(var(--blue-light), 10%);
+  border: 2px solid rgb(var(--blue), 10%);
   transition: var(--def-tran);
   cursor: pointer;
 }
@@ -435,13 +490,14 @@
   display: block;
   top: 3.25em;
   left: 100%;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   padding: 2px;
   margin: 0 .5em;
   background: rgb(var(--pure-color));
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm) rgb(var(--color-fg-accent), 20%);
+  border: 1px solid rgb(255, 0, 0, 20%);
+  box-shadow: 0 2px 7px rgb(var(--color-fg-accent), 10%);
   fill: rgb(255, 0, 0);
   stroke: rgb(255, 0, 0);
   cursor: pointer;
@@ -456,25 +512,20 @@
 }
 
 .form-modal form label img:hover {
-  background: rgb(var(--teal), 20%);
-  box-shadow: var(--shadow) rgb(var(--teal-dark), 55%);
+  background: rgb(var(--blue-light), 10%);
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 25%);
 }
 
 .form-modal form select {
   outline: none;
   font-size: 1em;
-  border: 2px solid transparent;
+  border: 1px solid rgb(var(--blue), 10%);
   padding: .5rem .25rem;
-  border-bottom: 2px solid rgb(var(--teal));
-  border-radius: var(--radius);
-  color: rgb(var(--color-fg-accent));
-  background: rgb(var(--teal-light), 20%);
   margin: 0 0 1em 0;
+  color: rgb(var(--blue-dark));
+  background: rgb(var(--blue-light), 10%);
+  border-radius: var(--radius);
   transition: var(--def-tran);
-}
-
-.form-modal form select::placeholder {
-  color: red;
 }
 
 .form-modal form input {
@@ -484,69 +535,69 @@
 }
 
 .form-modal input::placeholder {
-  color: rgb(var(--teal-dark));
+  color: rgb(var(--blue-dark), 50%);
 }
 
 .form-modal textarea {
-  border: 2px solid transparent;
+  border: 1px solid rgb(var(--blue), 10%);
   padding: .5rem;
   font-family: var(--fonts);
   border-radius: var(--radius);
-  color: rgb(var(--color-fg-accent));
-  background: rgb(var(--teal-light), 30%);
+  color: rgb(var(--blue-dark));
+  background: rgb(var(--blue-light), 10%);
   font-size: .9em;
   font-weight: 400;
   line-height: 1.5em;
   resize: vertical;
   outline: none;
+  transition: var(--def-tran);
   margin: 0 0 1em 0;
 }
 
 .form-modal textarea::placeholder {
-  color: rgb(var(--teal-dark));
+  color: rgb(var(--blue-dark), 50%);
   font-family: var(--fonts);
 }
 
 .form-modal textarea:focus {
-  border: 2px solid rgb(var(--blue-light));
+  border: 1px solid rgb(var(--blue-light));
   box-shadow: var(--shadow-sm) rgb(var(--blue-light), 30%);
   background: rgb(var(--pure-color));
   color: rgb(var(--blue-dark));
 }
 
 .form-modal input:not([type='submit']) {
-  border: 2px solid transparent;
   padding: .5rem;
   position: relative;
-  border-bottom: 2px solid rgb(var(--teal));
+  border: 1px solid rgb(var(--blue), 10%);
   border-radius: var(--radius);
-  color: rgb(var(--color-fg-accent));
-  background: rgb(var(--teal-light), 20%);
+  color: rgb(var(--blue-dark));
+  background: rgb(var(--blue-light), 10%);
   margin: 0 0 1em 0;
 }
 
 .form-modal input:not([type='submit']).error {
-  border-bottom: 2px solid red;
-  color: red;
+  border: 1px solid rgb(255, 0, 0, 20%);
+  color: darkred;
   background: rgb(255, 0, 0, 5%);
 }
 
 .form-modal input:not([type='submit']).error:focus {
-  border: 2px solid rgb(255, 0, 0, 5%);
-  box-shadow: var(--shadow-sm) rgb(255, 0, 0, 25%);
+  border: 1px solid rgb(255, 0, 0, 25%);
+  box-shadow: var(--shadow-sm) rgb(255, 0, 0, 15%);
   background: rgb(var(--pure-color));
   color: darkred;
 }
 
 .form-modal input:not([type='submit']):focus {
-  border: 2px solid rgb(var(--blue-light));
+  border: 1px solid rgb(var(--blue-light));
   box-shadow: var(--shadow-sm) rgb(var(--blue-light), 30%);
   background: rgb(var(--pure-color));
   color: rgb(var(--blue-dark));
 }
 
 .form-modal input:focus::placeholder {
-  color: rgb(var(--teal-dark));
+  color: rgb(var(--blue-dark));
 }
 
 .form-modal input[type='submit'] {
@@ -559,7 +610,7 @@
   background: rgb(var(--blue-light), 40%);
   display: block;
   cursor: pointer;
-  margin: 1.5em auto 0 auto;
+  margin: 1em auto 0 0;
   border-radius: var(--radius);
 }
 
@@ -567,6 +618,16 @@
   background: rgb(var(--blue));
   color: rgb(var(--pure-color));
   box-shadow: var(--shadow-sm) rgb(var(--blue), 30%);
+}
+
+.form-modal .footer {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem -1.5rem -1rem -1.5rem;
+  padding: 0 1.5rem 1rem 1.5rem;
+  border-top: 1px solid rgb(var(--blue), 20%);
+  background: rgb(var(--blue-light), 10%);
+
 }
 
 .form-modal .form-msg {
@@ -626,9 +687,10 @@
   background: rgb(var(--pure-color));
   flex-direction: column;
   box-shadow: var(--shadow-full);
-  border: 3px solid transparent;
   margin: 20px 0;
   padding: 1em;
+  overflow: hidden;
+  border: 1px solid rgb(var(--purple), 20%);
   border-radius: var(--radius);
   transition: var(--def-tran);
 }
@@ -638,9 +700,11 @@
   align-items: center;
 }
 
-.post-card .header {
-  display: flex;
-  align-items: center;
+.post-card>.header {
+  background: rgb(var(--purple-light), 15%);
+  margin: -15px -20px 0 -20px;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgb(var(--purple), 20%);
 }
 
 .post-card .header .item {
@@ -657,7 +721,7 @@
   width: 22px;
   height: 22px;
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm) rgb(var(--teal-dark), 30%);
+  box-shadow: var(--shadow-sm) rgb(var(--purple), 20%);
   object-fit: cover;
   margin: 0 .25em 0 0;
   background-color: rgb(var(--pure-color));
@@ -699,6 +763,11 @@
   margin: 0 0.4em 0 0;
 }
 
+.button-group a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .button-group button:hover {
   color: rgb(var(--pure-color));
   stroke: rgb(var(--pure-color));
@@ -714,16 +783,15 @@
 .post-card .body h2,
 .user-card h2,
 .group-card h2 {
-  background: linear-gradient(170deg, rgb(var(--purple)), rgb(var(--blue)));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: rgb(var(--purple));
   font-size: 3rem;
 }
 
 
 .post-card .tools {
-  margin: .75em 0;
+  margin: .5em 0;
+  border-top: 2px solid rgb(var(--blue), 20%);
+  padding: .75em 0;
 }
 
 .post-card .tools .icon-group {
@@ -738,7 +806,6 @@
   margin: .5em 0;
 }
 
-
 .post-card .body img {
   display: block;
   color: rgb(var(--purple-dark));
@@ -748,7 +815,7 @@
   max-height: 400px;
   object-fit: contain;
   border-radius: calc(var(--radius)*2);
-  background: rgb(var(--teal), 10%);
+  background: rgb(var(--blue-light), 20%);
   transition: var(--def-tran);
 }
 
@@ -765,8 +832,9 @@
   position: relative;
   flex: 1 auto;
   border-radius: var(--radius);
+  border: 1px solid rgb(var(--blue), 15%);
   color: rgb(var(--color-fg));
-  background: rgb(var(--blue-light), 20%);
+  background: rgb(var(--blue-light), 10%);
   resize: vertical;
   outline: none;
   transition: var(--def-tran);
@@ -777,16 +845,20 @@
   color: rgb(var(--blue));
 }
 
+.comments form textarea:hover {
+  background: rgb(var(--blue-light), 25%);
+}
+
 .comments form textarea:focus {
   background: rgb(var(--pure-color));
-  box-shadow: var(--shadow-sm) rgb(var(--blue), 40%);
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 20%);
 }
 
 .comments form button {
   border: none;
   padding: .25rem;
-  width: 2em;
-  height: 2em;
+  width: 30px;
+  height: 30px;
   position: relative;
   border-radius: var(--radius);
   color: rgb(var(--color-bg));
@@ -803,19 +875,23 @@
 
 .comments form {
   display: flex;
-  align-items: baseline;
 }
 
 .comments .comment {
-  box-shadow: var(--shadow-sm) rgb(var(--purple), 20%);
   border-radius: var(--radius);
-  margin: 15px 0 0 0;
+  box-shadow: var(--shadow-sm) rgb(var(--color-fg-accent), 5%);
+  margin: 1.5em calc(.5em + 30px) 0 calc(.5em + 30px);
   padding: .5em;
+  border: 1px solid rgb(var(--blue-light));
   line-height: 1.4em;
+  overflow: hidden;
 }
 
 .comments .comment .header {
-  margin: 0 0 .3em 0;
+  margin: -.5em -.5em .5em -.5em;
+  padding: .4em .5em;
+  border-bottom: 1px solid rgb(var(--blue), 10%);
+  background: rgb(var(--blue-light), 10%);
 }
 
 .comments .comment .header a {
@@ -828,15 +904,19 @@
 
 .comments form img,
 .comments .comment .header img {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm) rgb(var(--teal-dark), 30%);
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 20%);
   object-fit: cover;
   margin: 0 .5em 0 0;
   background-color: rgb(var(--pure-color));
 }
 
+.comments .comment .header img {
+  width: 20px;
+  height: 20px;
+}
 
 /* user details */
 
@@ -897,4 +977,40 @@
 
 .group-card .stats .icon-group {
   margin: 0 0 0 -.25rem;
+}
+
+.problem-card {
+  display: flex;
+  height: 150px;
+  border: 1px solid rgb(var(--color-fg-accent), 20%);
+  border-radius: var(--radius);
+  background: rgb(var(--color-fg-accent), 3%);
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.problem-card svg {
+  width: 4em;
+  height: 4em;
+  fill: rgb(var(--blue), 50%);
+  stroke: rgb(var(--color-fg-accent), 50%);
+}
+
+.problem-card div {
+  display: block;
+  color: rgb(var(--color-fg-accent), 80%);
+  font-weight: 500;
+  font-size: 1.3em;
+  padding: .5em;
+}
+
+.problem-card div h4 {
+  font-weight: 600;
+}
+
+.problem-card div p {
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: rgb(var(--color-fg-accent), 40%);
 }

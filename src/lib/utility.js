@@ -46,4 +46,25 @@ function useDebouncedValue(value, delay = 250) {
   return debouncedValue
 }
 
-export { useDebounce, useDebouncedState, useDebouncedValue }
+function truncate(text, length = 256) {
+  return text.length > length
+    ? text.slice(0, length).trim().concat('…')
+    : text.trim()
+}
+
+function contains(target, subject) {
+  for (const object of subject) {
+    if (target === object) {
+      return true
+    }
+  }
+  return false
+}
+
+export {
+  useDebounce,
+  useDebouncedState,
+  useDebouncedValue,
+  truncate,
+  contains,
+}

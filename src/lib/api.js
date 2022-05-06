@@ -6,7 +6,7 @@ const getConfig = () => ({
 })
 
 // group requests 
-const createGroup = async (data) => {
+const createGroup = async ({ data }) => {
   try {
     const res = await fetch(`${API_URL}/groups/create`, {
       method: 'POST',
@@ -39,8 +39,25 @@ const joinGroup = async (uri) => {
   }
 }
 
+const updateGroup = async ({ data, uri }) => {
+  try {
+    const res = await fetch(`${API_URL}/groups/${uri}`, {
+      method: 'PUT',
+      headers: getConfig(),
+      body: data,
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 // post requests 
-const createPost = async (data) => {
+const createPost = async ({ data }) => {
   try {
     const res = await fetch(`${API_URL}/posts/create`, {
       method: 'POST',
@@ -56,7 +73,6 @@ const createPost = async (data) => {
     throw new Error(err)
   }
 }
-
 
 const getPosts = async ({ queryKey }) => {
   try {
@@ -75,6 +91,22 @@ const getPosts = async ({ queryKey }) => {
   }
 }
 
+const updatePost = async ({ data, uri }) => {
+  try {
+    const res = await fetch(`${API_URL}/posts/${uri}`, {
+      method: 'PUT',
+      headers: getConfig(),
+      body: data,
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
 
 const deletePost = async ({ uri }) => {
   try {
@@ -112,6 +144,23 @@ const createComment = async ({ uri, data }) => {
     throw new Error(err)
   }
 }
+
+const updateComment = async ({ uri }) => {
+  try {
+    const res = await fetch(`${API_URL}/comments/${uri}`, {
+      method: 'DELETE',
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 
 const deleteComment = async ({ uri }) => {
   try {
@@ -215,14 +264,17 @@ const checkForExistance = async ({ queryKey }) => {
 export {
   createGroup,
   joinGroup,
-  createPost,
-  createComment,
-  getPosts,
   getUser,
+  updateGroup,
   loginUser,
   registerUser,
-  deleteComment,
+  createPost,
+  getPosts,
+  updatePost,
   deletePost,
+  createComment,
+  updateComment,
+  deleteComment,
   checkForExistance,
   getDataFromURI,
 }
