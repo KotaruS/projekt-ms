@@ -1,13 +1,13 @@
 import { updateGroup } from "../../lib/api"
 import GroupForm from "./GroupForm"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { UserContext } from "../../App"
 import { getDataFromURI, getUser } from "../../lib/api"
 
 function UpdateGroup() {
-  const { context, setContext } = useContext(UserContext)
+  const { context } = useContext(UserContext)
   const { uri } = useParams()
   const navigate = useNavigate()
   const user = useQuery(['user', 'me'], getUser, {
@@ -17,8 +17,15 @@ function UpdateGroup() {
   const group = useQuery(['group', uri], getDataFromURI, {
     retry: 0,
   })
+
+  useEffect(() => {
+    if (!context.token) {
+      navigate('/401', { replace: true })
+    }
+  }, [])
+
   if (user.isSuccess && group.isSuccess && (user?.data?._id !== group?.data?.owner)) {
-    navigate('/404')
+    navigate('/403', { replace: true })
   }
 
   return (

@@ -1,28 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
 import { UserContext } from "../../App"
-import { getDataFromURI, getUser, joinGroup } from "../../lib/api"
+import { getDataFromURI, getUser } from "../../lib/api"
 import { useContext } from "react"
 import Feed from "../Feed"
-import { FaUsers, FaUserPlus, FaPen, FaGhost } from "react-icons/fa"
+import { FaUsers, FaUserPlus, FaPen, FaGhost, FaTrash, FaPlusSquare } from "react-icons/fa"
 import { contains } from "../../lib/utility"
+import { ContextMenu } from "../../components"
 
 function Group() {
   const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const { uri } = useParams()
+  const location = useLocation()
   const navigate = useNavigate()
-  const joinG = useMutation(joinGroup, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('group')
-      queryClient.invalidateQueries(['user', 'me'])
-    }
-  })
+
   const group = useQuery(['group', uri], getDataFromURI, {
     retry: 0,
     onError: (error) => {
       if (error.message === "Invalid URL address") {
-        navigate('/404')
+        navigate('/404', { replace: true })
       }
     }
   })
@@ -30,12 +27,36 @@ function Group() {
     retry: 1,
     enabled: !!context.token
   })
+
+
   const color = { '--color': 'var(--purple)' }
 
   return group.isSuccess && (
     <div className="detail">
       <div className="group-card">
         <div className="header">
+          {((user?.data?._id === group?.data?.owner) || (contains(user?.data?._id, group?.data?.members))) &&
+            <ContextMenu
+              className='absolute-r'
+              content={[
+                ...(user?.data?._id === group?.data?.owner)
+                  ? [{
+                    text: 'Edit group',
+                    link: 'edit',
+                  },
+                  {
+                    text: 'Delete group',
+                    link: 'delete',
+                  }]
+                  : [],
+                ...(contains(user?.data?._id, group?.data?.members))
+                  ? [{
+                    text: 'Leave group',
+                    link: 'leave',
+                  }]
+                  : [],
+              ]}
+            />}
           <img src={group.data.image ? group.data.image : '/group-blank.svg'} alt={group.data.name} />
           <h2>{group.data.name}</h2>
         </div>
@@ -49,17 +70,22 @@ function Group() {
           </div>
         </div>
       </div>
-      <div className="button-group">
-        {user.isSuccess && group.isSuccess && (!contains(user?.data?._id, group?.data?.members)) && (
-          <button onClick={() => joinG.mutate(group.data?.uri)}><FaUserPlus />Join group</button>
-        )}
-        {user.isSuccess && (user?.data?._id === group?.data?.owner) && (
-          <Link to="edit" >
-            <button><FaPen />Edit group</button>
-          </Link>
-        )}
-      </div>
-      {group?.data?.posts?.length !== 0 ? <Feed />
+      {user.isSuccess &&
+        <div className="button-group">
+          {group.isSuccess && (contains(user?.data?._id, group?.data?.members))
+            ? <Link to="/post/create" state={{ background: location, group: group?.data?._id }} >
+              <button className="blue"><FaPlusSquare />Create Post</button>
+            </Link>
+            : <Link to="join" >
+              <button className="blue">
+                <FaUserPlus />Join group
+              </button>
+            </Link>
+          }
+        </div>
+      }
+      {group?.data?.posts?.length !== 0
+        ? <Feed />
         : <div className="problem-card">
           <FaGhost />
           <div>

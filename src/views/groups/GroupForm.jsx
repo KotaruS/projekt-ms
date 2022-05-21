@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack, IoClose } from "react-icons/io5"
 import { checkForExistance, createGroup } from "../../lib/api"
-import { StatusMessage } from "../../components"
+import { DismissArea, StatusMessage } from "../../components"
 import { useDebouncedState } from "../../lib/utility"
 
 function GroupForm({ mutationFunc = createGroup, prefill, title }) {
@@ -16,10 +16,11 @@ function GroupForm({ mutationFunc = createGroup, prefill, title }) {
 
   const nameExists = useQuery(['group', 'name', name], checkForExistance)
   const submit = useMutation(mutationFunc, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       setForm('success')
       navigate('/')
       queryClient.invalidateQueries(['user', 'me'])
+      queryClient.invalidateQueries(['group', data.uri])
     },
     onError: () => {
       setForm('failed')
@@ -54,7 +55,8 @@ function GroupForm({ mutationFunc = createGroup, prefill, title }) {
     const formStuff = new FormData()
     formStuff.append('name', e.target.name.value)
     formStuff.append('description', e.target.description.value)
-    formStuff.append('image', e.target.image.files[0])
+    formStuff.append('image', imageblob ? e.target.image.files[0] : '')
+    formStuff.append('restricted', !e.target.restricted.checked)
     submit.mutate({ data: formStuff, uri: prefill?.uri })
   }
   const handleChange = ({ target }) => {
@@ -130,12 +132,19 @@ function GroupForm({ mutationFunc = createGroup, prefill, title }) {
             rows="4"
             defaultValue={prefill?.description}
           />
+          <label htmlFor="restricted">Visibility</label>
+          <input
+            type="checkbox"
+            name="restricted"
+            id="restricted"
+            defaultChecked={prefill?.restricted ? !prefill?.restricted : true}
+          />
           <div className="footer">
             <input type="submit" value="Submit" />
           </div>
         </form>
       </div>
-      <div onClick={handleClick} className='modal-background' />
+      <DismissArea />
     </>
   )
 }

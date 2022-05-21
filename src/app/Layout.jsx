@@ -1,4 +1,4 @@
-import { useContext, } from "react"
+import { useContext, useEffect, useRef, } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
 import Logo from "../styles/logo.svg"
 import { UserContext } from "../App"
@@ -7,9 +7,11 @@ import {
   FaSignInAlt,
   FaRegPlusSquare,
   FaShapes,
+  FaInfo,
 } from "react-icons/fa"
 import { useQuery } from "react-query"
 import { getUser } from "../lib/api"
+import { Toast } from "../components"
 
 function Layout() {
   const { context, setContext } = useContext(UserContext)
@@ -21,12 +23,10 @@ function Layout() {
 
   const location = useLocation()
   const color = { '--color': 'var(--purple)' }
-  const handleScroll = e => {
-    console.log("aeea");
-  }
 
   return (
     <>
+      <Toast getter={context} setter={setContext} />
       <nav className="main-nav">
         <Link className="spacer" to='/'>
           <img src={Logo} alt="logo" width="200" />
@@ -80,6 +80,11 @@ function Layout() {
         </nav>
         <Outlet />
       </div>
+      <footer>
+        <img src={Logo} alt="logo" />
+        <div>Reactí projekt k předmětu OWE</div>
+        <div>©2022 Martin Soukup</div>
+      </footer>
     </>
   )
 }

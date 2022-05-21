@@ -11,13 +11,15 @@ const {
   getGroups,
   updateGroupDetails,
   joinGroup,
-  deleteGroup } = require('../controllers/groupController')
+  deleteGroup,
+  leaveGroup } = require('../controllers/groupController')
 
 router.get('/dev', devMiddleware, getGroups)
 router.get('/', groupExists)
 
 router.post('/create', requireToken, upload.single('image'), createGroup)
 router.get('/join/:uri', processURI(Group), requireToken, joinGroup)
+router.get('/leave/:uri', processURI(Group), requireToken, leaveGroup)
 router.route('/:uri')
   .get(processURI(Group), verifyToken, returnGroup)
   .put(processURI(Group), upload.single('image'), requireToken, updateGroupDetails)

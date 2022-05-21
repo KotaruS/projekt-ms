@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
 import { IoArrowBack, IoClose } from "react-icons/io5"
 import { getUser, createPost } from "../../lib/api"
-import { StatusMessage } from "../../components"
+import { DismissArea, StatusMessage } from "../../components"
 
 function PostForm({ mutationFunc = createPost, prefill, title }) {
   const { context, setContext } = useContext(UserContext)
@@ -18,10 +18,12 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
     enabled: !!context.token
   })
   const submit = useMutation(mutationFunc, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       setForm('success')
       navigate('/')
       queryClient.invalidateQueries(['user', 'me'])
+      queryClient.invalidateQueries(['posts'])
+      queryClient.invalidateQueries(['post', data.uri])
     },
     onError: () => {
       setForm('failed')
@@ -29,7 +31,7 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
   })
 
   const color = { '--color': 'var(--purple)' }
-  const visible = { 'display': prefill ? 'none' : 'block' }
+  const visible = { 'display': title === 'Edit post' ? 'none' : 'block' }
   useEffect(() => {
     if (prefill?.image) {
       setImageBlob(prefill?.image)
@@ -50,7 +52,8 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
     formStuff.append('group', e.target.group.value)
     formStuff.append('title', e.target.title.value)
     formStuff.append('content', e.target.content.value)
-    formStuff.append('image', e.target.image.files[0])
+    formStuff.append('image', imageblob ? e.target.image.files[0] : '')
+    formStuff.append('restricted', !e.target.restricted.checked)
     submit.mutate({ data: formStuff, uri: prefill?.uri })
   }
 
@@ -123,12 +126,19 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
           <StatusMessage
             isInfo={{ condition: !imageblob, message: 'Upload image smaller than 1MB.' }}
           />
+          <label htmlFor="restricted">Visibility</label>
+          <input
+            type="checkbox"
+            name="restricted"
+            id="restricted"
+            defaultChecked={prefill?.restricted ? !prefill?.restricted : true}
+          />
           <div className="footer">
             <input type="submit" value="Submit" />
           </div>
         </form>
       </div>
-      <div onClick={handleClick} className='modal-background' />
+      <DismissArea />
     </>
   )
 }

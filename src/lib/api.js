@@ -39,6 +39,22 @@ const joinGroup = async (uri) => {
   }
 }
 
+const leaveGroup = async (uri) => {
+  try {
+    const res = await fetch(`${API_URL}/groups/leave/${uri}`, {
+      method: 'GET',
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 const updateGroup = async ({ data, uri }) => {
   try {
     const res = await fetch(`${API_URL}/groups/${uri}`, {
@@ -56,13 +72,11 @@ const updateGroup = async ({ data, uri }) => {
   }
 }
 
-// post requests 
-const createPost = async ({ data }) => {
+const deleteGroup = async (uri) => {
   try {
-    const res = await fetch(`${API_URL}/posts/create`, {
-      method: 'POST',
+    const res = await fetch(`${API_URL}/groups/${uri}`, {
+      method: 'DELETE',
       headers: getConfig(),
-      body: data,
     })
     const group = await res.json()
     if (!res.ok) {
@@ -73,13 +87,13 @@ const createPost = async ({ data }) => {
     throw new Error(err)
   }
 }
-
-const getPosts = async ({ queryKey }) => {
+// post requests 
+const createPost = async ({ data }) => {
   try {
-    const [_key, key, value] = queryKey
-    const query = (key && value) ? `/?${key}=${value}` : ''
-    const res = await fetch(`${API_URL}/posts${query}`, {
+    const res = await fetch(`${API_URL}/posts/create`, {
+      method: 'POST',
       headers: getConfig(),
+      body: data,
     })
     const post = await res.json()
     if (!res.ok) {
@@ -91,6 +105,30 @@ const getPosts = async ({ queryKey }) => {
   }
 }
 
+const getPosts = async ({ queryKey, pageParam = 0 }) => {
+  try {
+    const [_key, key, value] = queryKey
+    const query =
+      (key && value)
+        ? pageParam
+          ? `/?${key}=${value}&pointer=${pageParam}`
+          : `/?${key}=${value}`
+        : pageParam
+          ? `/?pointer=${pageParam}`
+          : ''
+    const res = await fetch(`${API_URL}/posts${query}`, {
+      headers: getConfig(),
+    })
+    const post = await res.json()
+    if (!res.ok) {
+      throw post.message
+    }
+    return post
+  } catch (err) {
+    throw (err)
+  }
+}
+
 const updatePost = async ({ data, uri }) => {
   try {
     const res = await fetch(`${API_URL}/posts/${uri}`, {
@@ -98,27 +136,27 @@ const updatePost = async ({ data, uri }) => {
       headers: getConfig(),
       body: data,
     })
-    const group = await res.json()
+    const post = await res.json()
     if (!res.ok) {
-      throw group.message
+      throw post.message
     }
-    return group
+    return post
   } catch (err) {
     throw new Error(err)
   }
 }
 
-const deletePost = async ({ uri }) => {
+const deletePost = async (uri) => {
   try {
     const res = await fetch(`${API_URL}/posts/${uri}`, {
       method: 'DELETE',
       headers: getConfig(),
     })
-    const group = await res.json()
+    const post = await res.json()
     if (!res.ok) {
-      throw group.message
+      throw post.message
     }
-    return group
+    return post
   } catch (err) {
     throw new Error(err)
   }
@@ -162,7 +200,7 @@ const updateComment = async ({ uri }) => {
 }
 
 
-const deleteComment = async ({ uri }) => {
+const deleteComment = async (uri) => {
   try {
     const res = await fetch(`${API_URL}/comments/${uri}`, {
       method: 'DELETE',
@@ -222,7 +260,7 @@ const getUser = async ({ queryKey }) => {
   try {
     const [_key, uri] = queryKey
     const res = await fetch(`${API_URL}/users/${uri}`, {
-      headers: getConfig()
+      headers: getConfig(),
     })
     const user = await res.json()
     if (!res.ok) {
@@ -239,7 +277,9 @@ const getUser = async ({ queryKey }) => {
 const getDataFromURI = async ({ queryKey }) => {
   try {
     const [_key, uri] = queryKey
-    const res = await fetch(`${API_URL}/${_key}s/${uri}`)
+    const res = await fetch(`${API_URL}/${_key}s/${uri}`, {
+      headers: getConfig(),
+    })
     const data = await res.json()
     if (!res.ok) {
       throw data.message
@@ -264,8 +304,10 @@ const checkForExistance = async ({ queryKey }) => {
 export {
   createGroup,
   joinGroup,
+  leaveGroup,
   getUser,
   updateGroup,
+  deleteGroup,
   loginUser,
   registerUser,
   createPost,

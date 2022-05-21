@@ -73,42 +73,35 @@ const returnPost = asyncHandler(async (req, res) => {
 })
 
 // @desc Gets all posts for feed
-// @route GET api/posts?param <id>
+// @route GET api/posts?param<id>
 // @access Public/Private
 const getPosts = asyncHandler(async (req, res) => {
   const token = req.token?.id
-  const { group: groupParam, user: userParam } = req.query
-  if (userParam) {
-    const { _id } = await User.findOne({ 'uri': userParam })
-    const posts = await Post.find({ 'author': _id })
-      .sort({ 'createdAt': -1 })
-      .populate('author', 'name uri')
-      .populate('group', 'name uri')
+  const { group: groupParam, user: userParam, pointer } = req.query
+  let posts
+  try {
+    // getting feed for user profile
+    if (userParam) {
+      const { _id } = await User.findOne({ 'uri': userParam })
+      posts = await getPostsForFeed({ 'author': _id }, token, pointer)
+      // getting feed for group profile
+    } else if (groupParam) {
+      const { _id } = await Group.findOne({ 'uri': groupParam })
+      posts = await getPostsForFeed({ 'group': _id }, token, pointer)
+      // getting feed for home page of logged in user
+    } else if (token) {
+      const { groups } = await User.findById(token)
+      const condition = groups ? { 'group': { $in: groups } } : null
+      posts = await getPostsForFeed(condition, token, pointer)
+      // getting feed for public home page 
+    } else {
+      posts = await getPostsForFeed(null, null, pointer)
+    }
     res.status(200).json(posts)
-  } else if (groupParam) {
-    const { _id } = await Group.findOne({ 'uri': groupParam })
-    const posts = await Post.find({ 'group': _id })
-      .sort({ 'createdAt': -1 })
-      .populate('author', 'name uri')
-      .populate('group', 'name uri')
-    res.status(200).json(posts)
-  } else if (token) {
-    const { groups } = await User.findById(token)
-    const condition = groups ? { 'group': { $in: groups } } : null
-    const posts = await Post.find(condition)
-      .sort({ 'createdAt': -1 })
-      .populate('author', 'name uri')
-      .populate('group', 'name uri')
-    res.status(200).json(posts)
-  } else {
-    const posts = await Post.find({ restricted: false })
-      .sort({ 'createdAt': -1 })
-      .limit(30)
-      .populate('author', 'name uri')
-      .populate('group', 'name uri')
-    res.status(200).json(posts)
+  } catch {
+    res.status(400)
+    throw new Error('Cannot find any posts')
   }
-
 })
 
 // @desc Edits a post
@@ -117,15 +110,14 @@ const getPosts = asyncHandler(async (req, res) => {
 const editPost = asyncHandler(async (req, res) => {
   const { title, author, uri } = req.data
   req.body.uri = (title === req.body.title || !req.body.title) ? uri : await generateSlug(2, req.body.title, Post)
-  const image = req.file?.buffer && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}` || ''
+  req.body.image = req.body.image === '' ? ''
+    : req.file?.buffer
+    && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}`
   const token = req.token?.id
   try {
     if (token == author) {
       ['title', 'content', 'uri', 'restricted', 'image'].forEach((key) => {
-        req.data[key] = req.body[key] || req.data[key]
-        if (key === 'image') {
-          req.data[key] = image
-        }
+        req.data[key] = req.body[key] ?? req.data[key]
       })
       await req.data.save()
       res.status(200).json(req.data)
@@ -159,6 +151,21 @@ const deletePost = asyncHandler(async (req, res) => {
     throw new Error('Could not delete post')
   }
 })
+
+const getPostsForFeed = async (condition, caller = '', pointer) => {
+  const pointerPost = await Post.findById(pointer)
+  const posts = await Post.find({
+    ...condition,
+    'createdAt':
+      { $lt: pointerPost?.createdAt ?? new Date().toISOString() },
+    $or: [{ 'restricted': false }, { author: caller }]
+  })
+    .sort({ 'createdAt': -1 })
+    .limit(10)
+    .populate('author', 'name uri')
+    .populate('group', 'name uri')
+  return posts
+}
 
 module.exports = {
   createPost,

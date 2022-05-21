@@ -7,7 +7,7 @@
   width: 100%;
   padding: 5px;
   justify-content: space-between;
-  z-index: 10;
+  z-index: 70;
 }
 
 .main-nav img {
@@ -79,8 +79,9 @@
 .page-content {
   display: flex;
   flex-direction: row;
-  height: 100%;
-  min-height: 100vh;
+  height: calc(100% - min(50px, 2.5rem));
+  min-height: calc(100vh - min(50px, 2.5rem));
+  padding: 0 0 1em 0;
   background: rgb(var(--color-bg));
 }
 
@@ -92,9 +93,16 @@
 .feed {
   display: flex;
   flex-direction: column;
+  margin: 0 20px;
+  max-width: 100%;
+}
+
+.feed-wrap {
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
   width: 800px;
-  max-width: 40vw;
+  max-width: 95vw;
 }
 
 .detail {
@@ -102,7 +110,7 @@
   flex-direction: column;
   margin: 0 auto;
   width: 900px;
-  max-width: 60vw;
+  max-width: 95vw;
 }
 
 .side-nav {
@@ -197,28 +205,12 @@
   background: rgb(var(--teal), 15%);
 }
 
-.post-feed-card {
-  display: flex;
-  background: rgb(var(--pure-color));
-  flex-direction: column;
-  box-shadow: var(--shadow-sm) rgb(var(--color-fg-accent), 10%);
-  border: 1px solid rgb(var(--purple), 20%);
-  margin: 10px 0;
-  padding: 10px;
-  overflow: hidden;
-  border-radius: var(--radius);
-  transition: var(--def-tran);
-}
-
-.post-feed-card:hover {
-  box-shadow: var(--shadow) rgb(var(--color-fg-accent), 10%);
-}
-
 .post-info {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   background: rgb(var(--blue-light), 7%);
+  border-radius: var(--radius) var(--radius) 0 0;
   margin: -10px -10px 0 -10px;
   padding: 5px 10px;
   border-bottom: 1px solid rgb(var(--blue), 20%);
@@ -273,6 +265,23 @@
   background-position: 0 0;
 }
 
+.post-feed-card {
+  display: flex;
+  background: rgb(var(--pure-color));
+  flex-direction: column;
+  box-shadow: var(--shadow-sm) rgb(var(--color-fg-accent), 10%);
+  border: 1px solid rgb(var(--purple), 20%);
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  border-radius: var(--radius);
+  transition: var(--def-tran);
+}
+
+.post-feed-card:hover {
+  box-shadow: var(--shadow) rgb(var(--color-fg-accent), 10%);
+}
+
 .post-feed-card>a {
   color: rgb(var(--color-bg-accent));
   text-decoration: none;
@@ -313,11 +322,10 @@
   object-fit: cover;
   margin: .5em 0 0 0;
   border-radius: var(--radius);
-  background: rgb(var(--teal), 10%);
+  background: rgb(var(--blue-light), 20%);
   transition: var(--def-tran);
   cursor: pointer;
 }
-
 
 .post-feed-card .tools {
   font-size: 0.9rem;
@@ -358,6 +366,75 @@
   vertical-align: middle;
 }
 
+.loading-dots {
+  width: 2em;
+  margin: 0 auto 1em auto;
+  height: 1em;
+  fill: rgb(var(--blue), 50%);
+}
+
+.loading-dots>* {
+  animation: dots 2.3s ease-in-out infinite forwards;
+  transform: translateY(50%);
+}
+
+.loading-dots #two {
+  animation-delay: .3s;
+}
+
+.loading-dots #three {
+  animation-delay: .6s;
+}
+
+
+@keyframes dots {
+  20% {
+    transform: translateY(50%);
+  }
+
+  40% {
+    transform: translateY(-50%);
+  }
+
+  70% {
+    transform: translateY(50%);
+  }
+}
+
+.load-btn {
+  padding: .5em .75em;
+  font-weight: 600;
+  border: none;
+  font-size: 1em;
+  min-width: 150px;
+  color: rgb(var(--blue));
+  background: rgb(var(--blue-light), 40%);
+  display: block;
+  cursor: pointer;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  transition: var(--def-tran);
+}
+
+.load-btn:hover {
+  background: rgb(var(--blue));
+  color: rgb(var(--pure-color));
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 30%);
+}
+
+.load-btn:focus {
+  background: rgb(var(--blue-dark));
+  color: rgb(var(--pure-color));
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 50%);
+}
+
+.load-btn:disabled {
+  cursor: default;
+  color: rgb(var(--blue-dark), 70%);
+  background: rgb(var(--blue-light), 20%);
+  box-shadow: none;
+}
+
 /* form-modal page */
 
 .form-modal {
@@ -376,7 +453,7 @@
   border-radius: var(--radius);
   border: 1px solid rgb(var(--purple), 20%);
   overflow: auto;
-  z-index: 9;
+  z-index: 49;
 }
 
 .modal-background {
@@ -386,16 +463,10 @@
   min-width: 100%;
   min-height: 100%;
   cursor: pointer;
-  z-index: 4;
+  z-index: 40;
   background: rgb(var(--pure-color), 80%);
 }
 
-@supports (backdrop-filter: blur(1px)) {
-  .modal-background {
-    background: rgb(var(--pure-color), 15%);
-    backdrop-filter: blur(30px);
-  }
-}
 
 .form-modal .header {
   display: flex;
@@ -620,6 +691,12 @@
   box-shadow: var(--shadow-sm) rgb(var(--blue), 30%);
 }
 
+.form-modal input[type='submit']:focus {
+  background: rgb(var(--blue-dark));
+  color: rgb(var(--pure-color));
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 50%);
+}
+
 .form-modal .footer {
   display: flex;
   flex-direction: column;
@@ -674,13 +751,108 @@
   fill: green;
 }
 
-.form-modal input[type='submit']:focus {
-  background: rgb(var(--blue-dark));
+.form-modal fieldset {
+  border: none;
+  border-radius: var(--radius);
+  display: flex;
+  padding: .5em 0;
+}
+
+.form-modal fieldset .split {
+  min-width: 120px;
+  flex-direction: column;
+}
+
+.form-modal fieldset .split legend {
+  font-size: 1em;
+  color: rgb(var(--blue-dark));
+}
+
+/* unchecked */
+.form-modal input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  position: relative;
+  width: 2.3em;
+  height: .9em;
+  padding: 0;
+  margin: .5em 0 0 0;
+  background: rgb(var(--blue-light), 30%);
+  border-radius: calc(var(--radius)/2);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset 0 .1em .1em rgb(var(--color-fg-accent), 15%);
+  z-index: 1;
+  transition: var(--def-tran);
+}
+
+.form-modal input[type="checkbox"]:focus {
+  border: none;
+  background: rgb(var(--blue-light), 30%);
+  box-shadow: inset 0 .1em .1em rgb(var(--color-fg-accent), 15%);
+  border-radius: calc(var(--radius)/2);
+}
+
+.form-modal input[type="checkbox"]::before {
+  content: url('/public/eye-off.svg');
+  display: block;
   color: rgb(var(--pure-color));
-  box-shadow: var(--shadow-sm) rgb(var(--blue), 50%);
+  text-align: center;
+  line-height: 1.4em;
+  padding: .2em;
+  font-weight: 600;
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  top: 0;
+  left: 0;
+  background: rgb(var(--blue-light));
+  border-radius: var(--radius);
+  box-shadow:
+    inset 0 0 .8em .4em rgb(var(--color-fg-accent), 40%),
+    inset 0 0 8em .4em rgb(var(--blue), 20%),
+    .1em 0 .2em rgb(var(--color-fg-accent), 20%);
+  z-index: 2;
+  transform: translate(-0.05em, -18%);
+  transition: var(--def-tran);
+}
+
+.form-modal input[type="checkbox"]::after {
+  content: "private";
+  position: absolute;
+  top: -.1em;
+  left: 3.2em;
+  color: rgb(var(--color-fg-accent));
+  font-size: 0.9em;
+  font-weight: 400;
+}
+
+/* checked checkbox */
+.form-modal input[type="checkbox"]:checked {
+  background: rgb(var(--teal), 40%);
+  box-shadow: inset 0 .1em .1em rgb(var(--color-fg-accent), 15%);
+}
+
+.form-modal input[type="checkbox"]:checked::after {
+  content: "public";
+}
+
+.form-modal input[type="checkbox"]:checked::before {
+  content: url('/public/eye-on.svg');
+  left: 50%;
+  background: rgb(var(--teal-dark));
+  box-shadow: -.1em 0 .2em rgb(var(--color-fg-accent), 20%);
 }
 
 /* post details */
+.modal-post {
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  left: 0;
+}
 
 .post-card {
   display: flex;
@@ -689,10 +861,10 @@
   box-shadow: var(--shadow-full);
   margin: 20px 0;
   padding: 1em;
-  overflow: hidden;
   border: 1px solid rgb(var(--purple), 20%);
   border-radius: var(--radius);
   transition: var(--def-tran);
+  z-index: 49;
 }
 
 .post-card .header {
@@ -702,9 +874,14 @@
 
 .post-card>.header {
   background: rgb(var(--purple-light), 15%);
-  margin: -15px -20px 0 -20px;
+  margin: -1em -1em 0 -1em;
+  border-radius: var(--radius) var(--radius) 0 0;
   padding: 10px 20px;
   border-bottom: 1px solid rgb(var(--purple), 20%);
+}
+
+.post-card>.header>:last-child {
+  margin-right: 0;
 }
 
 .post-card .header .item {
@@ -744,18 +921,26 @@
 }
 
 .button-group button {
-  color: rgb(var(--blue));
-  fill: rgb(var(--blue));
-  stroke: rgb(var(--blue));
+  color: rgb(var(--color));
+  fill: rgb(var(--color));
+  stroke: rgb(var(--color));
   font-size: 1rem;
   margin: 0 0.5em 0 0;
   outline: none;
   border: none;
   padding: .5em .75em;
   border-radius: var(--radius);
-  background: rgb(var(--blue), 10%);
+  background: rgb(var(--color), 10%);
   transition: var(--def-tran);
   cursor: pointer;
+}
+
+.button-group button:hover {
+  color: rgb(var(--pure-color));
+  stroke: rgb(var(--pure-color));
+  fill: rgb(var(--pure-color));
+  box-shadow: var(--shadow-sm) rgb(var(--color), 30%);
+  background: rgb(var(--color));
 }
 
 .button-group button svg {
@@ -768,13 +953,6 @@
   color: inherit;
 }
 
-.button-group button:hover {
-  color: rgb(var(--pure-color));
-  stroke: rgb(var(--pure-color));
-  fill: rgb(var(--pure-color));
-  box-shadow: var(--shadow-sm) rgb(var(--blue), 30%);
-  background: rgb(var(--blue));
-}
 
 .post-card .body {
   margin: .5em 0;
@@ -875,16 +1053,16 @@
 
 .comments form {
   display: flex;
+  margin: 0 0 1.5em;
 }
 
 .comments .comment {
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm) rgb(var(--color-fg-accent), 5%);
-  margin: 1.5em calc(.5em + 30px) 0 calc(.5em + 30px);
+  margin: 0 calc(.5em + 30px) 1em calc(.5em + 30px);
   padding: .5em;
   border: 1px solid rgb(var(--blue-light));
   line-height: 1.4em;
-  overflow: hidden;
 }
 
 .comments .comment .header {
@@ -892,6 +1070,7 @@
   padding: .4em .5em;
   border-bottom: 1px solid rgb(var(--blue), 10%);
   background: rgb(var(--blue-light), 10%);
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .comments .comment .header a {
@@ -923,11 +1102,12 @@
 .user-card {
   display: flex;
   align-items: center;
-  margin: 0 0 20px 0;
+  margin: 20px 0;
   background: rgb(var(--pure-color));
-  border-radius: 0 0 var(--radius) var(--radius);
+  border-radius: var(--radius);
   padding: 20px;
-  box-shadow: var(--shadow) rgb(var(--blue), 10%);
+  border: 1px solid rgb(var(--teal), 20%);
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 10%);
 }
 
 .user-card img {
@@ -943,15 +1123,17 @@
 /* group details */
 
 .group-card {
-  margin: 0 0 20px 0;
+  margin: 20px 0;
   background: rgb(var(--pure-color));
-  border-radius: 0 0 var(--radius) var(--radius);
+  border-radius: var(--radius);
   padding: 20px;
-  box-shadow: var(--shadow) rgb(var(--blue), 10%);
+  border: 1px solid rgb(var(--teal), 20%);
+  box-shadow: var(--shadow-sm) rgb(var(--blue), 10%);
 }
 
 .group-card .header {
   display: flex;
+  position: relative;
   align-items: center;
 }
 
@@ -979,6 +1161,7 @@
   margin: 0 0 0 -.25rem;
 }
 
+/* general */
 .problem-card {
   display: flex;
   height: 150px;
@@ -1013,4 +1196,103 @@
   margin-top: 5px;
   font-size: 0.9em;
   color: rgb(var(--color-fg-accent), 40%);
+}
+
+.context {
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  margin: .25em;
+  position: relative;
+  color: rgb(var(--color-fg-accent), 80%);
+  z-index: 10;
+}
+
+.context-trigger {
+  padding: .25em;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
+}
+
+.context.absolute-r {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.context .context-list {
+  position: absolute;
+  display: block;
+  top: 1.5em;
+  right: 0;
+  width: max-content;
+  border-radius: calc(var(--radius)/2);
+  border: 1px solid rgb(var(--color-bg) 20%);
+  box-shadow: var(--shadow-sm) rgb(var(--blue-dark), 50%);
+  background: rgb(var(--blue-dark), 90%);
+  list-style: none;
+  max-width: 80vw;
+  transform-origin: top;
+  opacity: 0;
+  user-select: none;
+  pointer-events: none;
+  transform: translateY(-.5em) scaleY(0.9);
+  transition: var(--def-tran);
+  z-index: 9;
+}
+
+.context .context-trigger.on+.context-list {
+  opacity: 1;
+  pointer-events: initial;
+  transform: translateY(0) scaleY(1);
+}
+
+.context .context-list li {
+  padding: .75em .6em;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  color: rgb(var(--pure-color), 80%);
+  transition: var(--def-tran);
+}
+
+.context .context-list li:hover {
+  color: rgb(var(--pure-color));
+  background: rgb(var(--color-bg), 15%);
+}
+
+.context .context-list li+li {
+  border-top: 1px solid rgb(var(--pure-color), 20%);
+}
+
+.context .context-list li a {
+  color: unset;
+  text-decoration: none;
+}
+
+.context-dismiss.on {
+  display: block;
+}
+
+.context-dismiss {
+  position: fixed;
+  left: 0;
+  display: none;
+  top: 0;
+  height: max(100%, 100vh);
+  width: max(100%, 100vw);
+  z-index: 6;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .modal-background {
+    background: rgb(var(--pure-color), 15%);
+    backdrop-filter: blur(30px);
+  }
+
+  .context .context-list {
+    background: rgb(var(--blue), 30%);
+    backdrop-filter: blur(20px) brightness(25%);
+  }
 }

@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom"
 
-function NoMatch() {
+function Forbidden() {
   return (
     <>
       <div className="error-page">
-        <h1>Error 404</h1>
-        <h2>You have wondered far beyond our reach.🤌</h2>
-        <p>I am afraid the thing you're looking for doesn't exist,</p>
+        <h1>401: Forbidden</h1>
+        <h2>It seems that you are not authorized to access the resource.</h2>
+        <p>In case you want to go back ⬇️</p>
         <Link to="/">Take me home <sup>country roads</sup></Link>
       </div>
       <div className="blur-background"></div>
     </>
   )
 }
-export default NoMatch
+export default Forbidden

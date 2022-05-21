@@ -4,10 +4,7 @@
   font-weight: 400 900;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+:root {
   /* pure rgb values so I can change transparency */
   --pure-color: 255, 255, 255;
   --color-bg: 254, 250, 253;
@@ -27,7 +24,14 @@
   --shadow: 0 2px 20px;
   --shadow-full: 0 2px 20px rgb(32 47 74 / 20%);
   --fonts: 'Lexend', 'Segoe UI', sans-serif;
-  --def-tran: all 0.3s ease;
+  --transition: 0.3s ease;
+  --def-tran: all var(--transition);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 .pointer {
@@ -56,6 +60,30 @@ h1 {
   font-weight: 800;
   font-size: 2.5rem;
   margin: 1rem 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.red {
+  --color: 255, 100, 100;
+  --comp-color: var(--pure-color);
+}
+
+.blue {
+  --color: var(--blue);
+  --comp-color: var(--pure-color);
+}
+
+.green {
+  --color: var(--teal);
+  --comp-color: var(--color-fg);
+}
+
+.purple {
+  --color: var(--purple);
+  --comp-color: var(--pure-color);
 }
 
 .buttoner {
@@ -155,14 +183,16 @@ a.buttoner {
   stroke: rgb(var(--pure-color));
 }
 
-.no-match {
+.error-page {
   margin: 0 auto;
-  width: 800px;
+  width: 900px;
+  max-width: 95vw;
+  position: relative;
   background: rgb(var(--pure-color));
   z-index: 6;
 }
 
-.no-match h1 {
+.error-page h1 {
   font-size: 5em;
   font-weight: 800;
   background: linear-gradient(170deg, rgb(var(--purple)), rgb(var(--blue)));
@@ -171,35 +201,35 @@ a.buttoner {
   -webkit-background-clip: text;
 }
 
-.no-match h2 {
+.error-page h2 {
   font-size: 1.7em;
   font-weight: 600;
   color: rgb(var(--blue-dark));
 }
 
-.no-match p {
-  font-size: 1.5em;
+.error-page p {
+  font-size: 1.3em;
   font-weight: 500;
   color: rgb(var(--blue-dark));
   margin: .5em 0;
 }
 
-.no-match a {
+.error-page a {
   font-size: 1.5em;
   font-weight: 500;
-  color: rgb(var(--blue-dark), 80%);
+  color: rgb(var(--blue-dark));
   margin: .5em 0;
   text-decoration: none;
   transition: var(--def-tran);
   position: relative;
 }
 
-.no-match a sup {
+.error-page a sup {
   font-size: 0.5em;
   color: rgb(var(--blue-dark), 40%);
 }
 
-.no-match a::before {
+.error-page a::before {
   content: "►";
   position: absolute;
   top: 50%;
@@ -211,11 +241,11 @@ a.buttoner {
   transition: var(--def-tran);
 }
 
-.no-match a:hover {
+.error-page a:hover {
   color: rgb(var(--blue));
 }
 
-.no-match a:hover::before {
+.error-page a:hover::before {
   color: rgb(var(--purple-light));
   transform: translateY(-35%) scale(1.3);
 }
@@ -227,7 +257,7 @@ a.buttoner {
   min-width: 100%;
   min-height: 100%;
   cursor: pointer;
-  z-index: 4;
+  z-index: 5;
   background: rgb(var(--pure-color), 80%);
 }
 
@@ -237,4 +267,118 @@ a.buttoner {
     background: rgb(var(--pure-color), 80%);
 
   }
+}
+
+footer {
+  width: 100%;
+  height: min(2.5rem, 50px);
+  padding: .5rem 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  box-shadow: var(--shadow-full);
+  align-items: center;
+}
+
+footer img {
+  object-position: left;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale();
+}
+
+footer div {
+  font-size: .9em;
+  color: rgb(var(--color-fg-accent));
+}
+
+.toast {
+  position: fixed;
+  top: 4em;
+  left: max(50%, 50vw);
+  transform: translateX(-50%);
+  z-index: 20;
+  background: rgb(var(--color));
+  color: rgb(var(--comp-color));
+  padding: .5em;
+  height: 4em;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  border-radius: var(--radius);
+  border: 1px solid rgb(var(--color-fg-accent), 10%);
+  box-shadow: var(--shadow-sm) rgb(var(--color), 80%),
+    var(--shadow-sm) rgb(var(--color-fg), 20%);
+  width: min(800px, 95vw);
+  animation: popIn .5s ease 1 forwards;
+  transition: var(--def-tran);
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+
+  100% {
+    transform: translateX(-50%);
+    opacity: 1;
+  }
+}
+
+.toast.disappear {
+  animation: popOut .5s ease 1 forwards;
+}
+
+@keyframes popOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+}
+
+.toast .icon {
+  width: 2em;
+  fill: rgb(var(--comp-color), 80%);
+  stroke: rgb(var(--comp-color), 80%);
+  height: 2em;
+}
+
+.toast span {
+  font-size: 1em;
+  line-height: 1.5em;
+  font-weight: 600;
+}
+
+.toast button {
+  font-size: 1.5em;
+  top: 50%;
+  right: 0;
+  position: absolute;
+  line-height: 1em;
+  opacity: 0;
+  transform: translateY(-50%);
+  color: rgb(var(--comp-color), 80%);
+  fill: rgb(var(--comp-color), 80%);
+  stroke: rgb(var(--comp-color), 80%);
+  background: transparent;
+  border: none;
+  transition: var(--def-tran);
+  cursor: pointer;
+}
+
+.toast:hover button {
+  opacity: 1;
+  right: .5em;
+}
+
+.toast button:hover {
+  color: rgb(var(--comp-color));
+  stroke: rgb(var(--comp-color));
+  fill: rgb(var(--comp-color));
 }

@@ -2,9 +2,9 @@ import { useContext } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
 import { useQueryClient, useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { UserContext } from '../App'
-import { loginUser } from '../lib/api'
-import { StatusMessage } from '../components'
+import { UserContext } from '../../App'
+import { loginUser } from '../../lib/api'
+import { DismissArea, StatusMessage } from '../../components'
 
 
 
@@ -66,12 +66,12 @@ function Login() {
             placeholder="Your Password"
             required
           />
-          <input
-            type="submit"
-            value="Sign in" />
+          <div className="footer">
+            <input type="submit" value="Sign in" />
+          </div>
         </form>
       </div>
-      <div onClick={handleClick} className='modal-background' />
+      <DismissArea />
     </>
   )
 }

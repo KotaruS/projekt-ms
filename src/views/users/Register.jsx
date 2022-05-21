@@ -2,10 +2,10 @@ import { useState, useEffect, useContext, useRef } from 'react'
 import { IoArrowBack, IoClose } from 'react-icons/io5'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { UserContext } from '../App'
-import { checkForExistance, registerUser } from '../lib/api'
-import { useDebouncedState } from '../lib/utility'
-import { StatusMessage } from '../components'
+import { UserContext } from '../../App'
+import { checkForExistance, registerUser } from '../../lib/api'
+import { useDebouncedState } from '../../lib/utility'
+import { DismissArea, StatusMessage } from '../../components'
 
 
 function Register() {
@@ -59,13 +59,11 @@ function Register() {
   const validateFormData = data => {
     if (nameExists.status !== 'success' && emailExists.status !== 'success') {
       setForm('failed')
-      console.log(1);
       return null
     }
     // checks if username and email input is in sync with debounced state
     if (data.name.value !== username || data.email.value !== email) {
       setForm('failed')
-      console.log(2);
       return null
     }
     if (data.password.value !== data.password2.value) {
@@ -77,7 +75,6 @@ function Register() {
     formData.append('email', data.email.value)
     formData.append('password', data.password.value)
     formData.append('image', data.image.files[0])
-
     sendData.mutate(formData)
   }
 
@@ -202,10 +199,12 @@ function Register() {
             isSuccess={{ condition: match === true, message: 'Passwords are the same' }}
             isError={{ condition: match === false, message: 'Password does not match' }}
           />
-          <input type="submit" value="Sign up" />
+          <div className="footer">
+            <input type="submit" value="Sign up" />
+          </div>
         </form>
       </div>
-      <div onClick={handleClick} className='modal-background' />
+      <DismissArea />
     </>
   )
 }

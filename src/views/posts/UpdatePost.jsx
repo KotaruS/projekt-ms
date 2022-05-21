@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { UserContext } from "../../App"
@@ -16,8 +16,15 @@ function UpdatePost() {
   const post = useQuery(['post', uri], getDataFromURI, {
     retry: 0,
   })
+
+  useEffect(() => {
+    if (!context.token) {
+      navigate('/401', { replace: true })
+    }
+  }, [])
+
   if (user.isSuccess && post.isSuccess && (user?.data?._id !== post?.data?.author?._id)) {
-    navigate('/404')
+    navigate('/403', { replace: true })
   }
 
   return (user.isSuccess && post.isSuccess) && (

@@ -90,17 +90,15 @@ const returnGroup = asyncHandler(async (req, res) => {
 const updateGroupDetails = asyncHandler(async (req, res) => {
   const { name, uri, owner, } = req.data
   const token = req.token?.id
-  const image = req.file?.buffer && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}` || ''
   req.body.uri = (name === req.body.name || !req.body.name) ? uri : await generateSlug(2, req.body.name, Group)
-
+  req.body.image = req.body.image === '' ? ''
+    : req.file?.buffer
+    && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}`
   try {
     if (token == owner) {
       // update only certain values to avoid overwriting members / posts list with bad request
       ['name', 'description', 'image', 'uri', 'restricted'].forEach((key) => {
-        req.data[key] = req.body[key] || req.data[key]
-        if (key === 'image') {
-          req.data[key] = image
-        }
+        req.data[key] = req.body[key] ?? req.data[key]
       })
       await req.data.save()
       res.status(200).json(req.data)
@@ -115,7 +113,7 @@ const updateGroupDetails = asyncHandler(async (req, res) => {
 })
 
 // @desc Join group 
-// @route POST api/groups/join/:uri
+// @route GET api/groups/join/:uri
 // @access Private
 const joinGroup = asyncHandler(async (req, res) => {
   const { _id: id, name, members, pendingMembers, restricted } = req.data
@@ -125,7 +123,7 @@ const joinGroup = asyncHandler(async (req, res) => {
     res.status(400)
     throw new Error('You are already in the group.')
   }
-  // returns minimal data when group is restricted and user is not a member
+
   try {
     if (restricted) {
       pendingMembers = [...pendingMembers, token]
@@ -141,6 +139,37 @@ const joinGroup = asyncHandler(async (req, res) => {
   } catch {
     res.status(400)
     throw new Error('Could not join group.')
+  }
+})
+
+
+// @desc Leave group 
+// @route GET api/groups/leave/:uri
+// @access Private
+const leaveGroup = asyncHandler(async (req, res) => {
+  const { _id: id, name, members, owner } = req.data
+  const token = req.token?.id
+
+  if (members.indexOf(token) === -1) {
+    res.status(400)
+    throw new Error('You not in the group')
+  }
+  if (token == owner) {
+    res.status(400)
+    throw new Error('Owner cannot leave group')
+  }
+  try {
+    if (token) {
+      await Group.updateOne({ '_id': id }, { $pull: { members: token } })
+      await User.updateOne({ '_id': token }, { $pull: { groups: id } })
+      res.status(200).json({ message: `You have left the group ${name}` })
+    } else {
+      res.status(400)
+      throw new Error('No user provided')
+    }
+  } catch {
+    res.status(400)
+    throw new Error('Could not leave group for unknown reason')
   }
 })
 
@@ -170,5 +199,6 @@ module.exports = {
   returnGroup,
   updateGroupDetails,
   joinGroup,
+  leaveGroup,
   deleteGroup
 }
