@@ -52,10 +52,6 @@ function Feed() {
 
   const color = { '--color': 'var(--blue)' }
 
-  const handleClick = (e, uri) => {
-    postDel.mutate(uri)
-  }
-
   return feed.isSuccess && (
     <div className="feed">
       {feed?.data?.pages?.map((page) => (
@@ -63,13 +59,30 @@ function Feed() {
           {page?.map((post) => (
             <div key={post._id} className="post-feed-card" >
               <div className="post-info">
-                <div>Posted in<Link className="linker" style={color} to={`/group/${post.group.uri}`}>{post.group.name}</Link> </div>
-                <div>by<Link className="linker" style={color} to={`/user/${post.author.uri}`}>{post.author.name}</Link></div>
+                <div>Posted in
+                  {post.group
+                    ? <Link className="linker" style={color}
+                      to={`/group/${post.group.uri}`}>
+                      {post.group.name}
+                    </Link>
+                    : 'deleted group'
+                  }
+                </div>
+                <div>by
+                  {post.author
+                    ?
+                    <Link className="linker" style={color}
+                      to={`/user/${post.author?.uri}`}>
+                      {post.author?.name}
+                    </Link>
+                    : ' deleted user'
+                  }
+                </div>
                 <div className="icon-group" style={color}>
                   <FaCalendar className="icon" />
                   <span>{context.dateFormat.format(new Date(post.createdAt))}</span>
                 </div>
-                {(user?._id === post.author._id) &&
+                {(user && user?._id === post.author?._id) &&
                   <ContextMenu
                     content={[
                       {
@@ -84,7 +97,7 @@ function Feed() {
                   />
                 }
               </div>
-              <Link to={`/post/${post.uri}`} state={{ background: location }}><h3>{post.title}</h3>
+              <Link to={`/post/${post.uri}`} ><h3>{post.title}</h3>
                 <div className={(!post.image && post.content.length > 300) ? "content excerpt" : "content"} >
                   {post.image ? <img src={post.image} alt={post.title} /> : truncate(post.content, 300)}
                 </div></Link>

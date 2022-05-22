@@ -1,15 +1,17 @@
 import { updateGroup } from "../../lib/api"
 import GroupForm from "./GroupForm"
 import { useContext, useEffect } from "react"
-import { useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { UserContext } from "../../App"
 import { getDataFromURI, getUser } from "../../lib/api"
 
 function UpdateGroup() {
-  const { context } = useContext(UserContext)
+  const { context, setContext } = useContext(UserContext)
   const { uri } = useParams()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   const user = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
@@ -28,8 +30,30 @@ function UpdateGroup() {
     navigate('/403', { replace: true })
   }
 
+  const update = useMutation(updateGroup, {
+    onSuccess: data => {
+      setContext({
+        ...context, message: {
+          type: 'success',
+          text: `Group ${data.name} updated!`
+        }
+      })
+      queryClient.invalidateQueries(['user', 'me'])
+      queryClient.invalidateQueries(['group', data.uri])
+      navigate('/')
+    },
+    onError: error => {
+      setContext({
+        ...context, message: {
+          type: 'error',
+          text: error.message
+        }
+      })
+    }
+  })
+
   return (
-    <GroupForm mutationFunc={updateGroup} prefill={group.data} title="Edit group details" />
+    <GroupForm mutation={update} prefill={group.data} title="Edit group details" />
   )
 }
 export default UpdateGroup

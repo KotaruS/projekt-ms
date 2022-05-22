@@ -183,11 +183,16 @@ const editUser = asyncHandler(async (req, res) => {
   // generate new uri only when new name is provided
   req.body.uri = (name === req.body.name || !req.body.name)
     ? uri : await generateSlug(2, req.body.name, User)
+
+  req.body.image = req.body.image === ''
+    ? ''
+    : req.file?.buffer && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}`
+
   try {
     if (token == id) {
       // update only certain values to avoid overwriting groups / posts list with bad request
-      ['name', 'email', 'password', 'image', 'uri', 'restricted'].forEach(
-        (key) => req.data[key] = req.body[key] || req.data[key])
+      ['name', 'password', 'image', 'uri', 'restricted'].forEach(
+        (key) => req.data[key] = req.body[key] ?? req.data[key])
       await req.data.save()
       res.status(200).json(req.data)
     } else {
@@ -210,7 +215,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     const isOwner = await Group.findOne({ 'owner': id })
     if (isOwner) {
       res.status(400)
-      throw new Error('You must not own any group to delete an account.')
+      throw new Error('You must not be an owner of a group before deleting your account.')
     }
     req.data.remove()
     // removes user from groups members list
@@ -219,7 +224,6 @@ const deleteUser = asyncHandler(async (req, res) => {
     await Post.updateMany({ '_id': posts }, { $unset: { author: '' } })
     // removes all references to user in comments while keeping the comment
     await Post.updateMany({ 'comments.author': id }, { $unset: { 'comments.author': '' } })
-    await Post.updateMany({ 'comments.replyTo': id }, { $unset: { 'comments.replyTo': '' } })
     res.status(200).json({ message: `Succesfully deleted user ${name}` })
   } else {
     res.status(403)

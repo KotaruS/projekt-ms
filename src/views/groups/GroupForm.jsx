@@ -6,8 +6,7 @@ import { checkForExistance, createGroup } from "../../lib/api"
 import { DismissArea, StatusMessage } from "../../components"
 import { useDebouncedState } from "../../lib/utility"
 
-function GroupForm({ mutationFunc = createGroup, prefill, title }) {
-  const queryClient = useQueryClient()
+function GroupForm({ mutation, prefill, title }) {
   const [imageblob, setImageBlob] = useState('')
   const input = useRef(undefined)
   const [name, setName] = useDebouncedState('', 300)
@@ -15,17 +14,6 @@ function GroupForm({ mutationFunc = createGroup, prefill, title }) {
   const [form, setForm] = useState('')
 
   const nameExists = useQuery(['group', 'name', name], checkForExistance)
-  const submit = useMutation(mutationFunc, {
-    onSuccess: (data) => {
-      setForm('success')
-      navigate('/')
-      queryClient.invalidateQueries(['user', 'me'])
-      queryClient.invalidateQueries(['group', data.uri])
-    },
-    onError: () => {
-      setForm('failed')
-    }
-  })
 
   const color = { '--color': 'var(--purple)' }
 
@@ -57,7 +45,10 @@ function GroupForm({ mutationFunc = createGroup, prefill, title }) {
     formStuff.append('description', e.target.description.value)
     formStuff.append('image', imageblob ? e.target.image.files[0] : '')
     formStuff.append('restricted', !e.target.restricted.checked)
-    submit.mutate({ data: formStuff, uri: prefill?.uri })
+    mutation.mutate({ data: formStuff, uri: prefill?.uri }, {
+      onSuccess: () => setForm('success'),
+      onError: () => setForm('failed'),
+    })
   }
   const handleChange = ({ target }) => {
     setName(target.value)
@@ -76,8 +67,8 @@ function GroupForm({ mutationFunc = createGroup, prefill, title }) {
         </div>
         <StatusMessage
           isLoading={{ condition: form === 'submiting', message: 'Processing data...' }}
-          isSuccess={{ condition: form === 'success', message: 'Group created succesfully! Redirecting in a moment...' }}
-          isError={{ condition: form === 'failed', message: 'Submition failed, please try again' }}
+          isSuccess={{ condition: form === 'success', message: 'Submission succesful! Redirecting in a moment...' }}
+          isError={{ condition: form === 'failed', message: 'Submission failed, please try again' }}
         />
         <form action="/" onSubmit={handleSubmit} method="post">
           <label className={imageblob && 'contains'} htmlFor="image">Group image

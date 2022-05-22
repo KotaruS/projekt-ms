@@ -1,16 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useQuery, } from "react-query"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
-import {
-  FaCalendar,
-  FaCommentAlt,
-  FaPaperPlane,
-  FaShapes,
-  FaTrash,
-} from "react-icons/fa"
 import { getUser, } from "../../lib/api"
 import { useContext } from "react"
 import Feed from "../Feed"
+import { ContextMenu } from "../../components"
 
 function User() {
   const { uri } = useParams('uri')
@@ -25,11 +19,36 @@ function User() {
     }
   })
 
+  const loggedUser = useQuery(['user', 'me'], getUser, {
+    retry: 1,
+    enabled: !!context.token
+  })
+
   return isSuccess && (
     <div className="detail">
       <div className="user-card" >
-        <img src={user.image ? user.image : '/user-blank.svg'} alt={user.name} />
-        <h2>{user.name}</h2>
+        <div className="header">
+          <img src={user.image ? user.image : '/user-blank.svg'} alt={user.name} />
+          <h2>{user.name}</h2>
+          {loggedUser?.data?._id === user?._id &&
+            <ContextMenu
+              className='absolute-r'
+              content={[
+                {
+                  text: 'Change password',
+                  link: 'pswd',
+                },
+                {
+                  text: 'Edit profile',
+                  link: 'edit',
+                },
+                {
+                  text: 'Delete profile',
+                  link: 'delete',
+                },
+              ]}
+            />}
+        </div>
       </div>
       <Feed />
 

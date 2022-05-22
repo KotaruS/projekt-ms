@@ -22,6 +22,9 @@ import DeletePost from "./views/posts/DeletePost"
 import JoinGroup from "./views/groups/JoinGroup"
 import DeleteGroup from "./views/groups/DeleteGroup"
 import LeaveGroup from "./views/groups/LeaveGroup"
+import ChangePass from "./views/users/ChangePass"
+import UpdateUser from "./views/users/UpdateUser"
+import DeleteUser from "./views/users/DeleteUser"
 
 const queryClient = new QueryClient()
 
@@ -72,6 +75,9 @@ function ForumApp() {
           </Route>
           <Route path='user' >
             <Route path=':uri' element={<User />} />
+            <Route path=':uri/pswd' element={<ChangePass />} />
+            <Route path=':uri/edit' element={<UpdateUser />} />
+            <Route path=':uri/delete' element={<DeleteUser />} />
           </Route>
           <Route path='logout' element={<Logout />} />
         </Route>
@@ -84,11 +90,6 @@ function ForumApp() {
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
           <Route path='post' >
-            <Route path=':uri' element={
-              <div className="modal-post">
-                <Post />
-              </div>
-            } />
             <Route path='create' element={<CreatePost />} />
           </Route>
         </Routes>)

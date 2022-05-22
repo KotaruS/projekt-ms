@@ -2,36 +2,42 @@ import { useContext, useEffect } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { UserContext } from "../../App"
-import { deleteGroup, getDataFromURI, getUser } from "../../lib/api"
+import { deleteUser, getUser } from "../../lib/api"
 
-function DeleteGroup() {
+function DeleteUser() {
   const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const { uri } = useParams()
   const navigate = useNavigate()
-  const user = useQuery(['user', 'me'], getUser, {
+
+  const loggedUser = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
   })
-  const group = useQuery(['group', uri], getDataFromURI, {
-    retry: 0,
-    onError: (error) => {
-      if (error.message === "Invalid URL address") {
-        navigate('/404', { replace: true })
-      }
-    }
-  })
 
-  const deleteG = useMutation(deleteGroup, {
+  const userDel = useMutation(deleteUser, {
     onSuccess: data => {
       setContext({
-        ...context, message: {
+        ...context,
+        message: {
+          type: 'success',
           text: data.message
+        },
+        token: '',
+      })
+      localStorage.removeItem('token')
+      queryClient.resetQueries('user')
+      queryClient.invalidateQueries('posts')
+      navigate('/', { replace: true })
+    },
+    onError: error => {
+      setContext({
+        ...context, message: {
+          type: 'error',
+          text: error.message
         }
       })
-      queryClient.invalidateQueries('group')
-      queryClient.invalidateQueries(['user', 'me'])
-      navigate('/', { replace: true })
+      navigate(-1)
     }
   })
 
@@ -39,10 +45,10 @@ function DeleteGroup() {
     if (!context.token) {
       navigate('/401', { replace: true })
     }
-    if (user.isSuccess && group.isSuccess && (user?.data?._id !== group?.data?.owner)) {
+    if (loggedUser?.data?.uri !== uri) {
       navigate('/403', { replace: true })
     } else {
-      deleteG.mutate(uri)
+      userDel.mutate(uri)
     }
   }, [])
 
@@ -50,4 +56,4 @@ function DeleteGroup() {
     <></>
   )
 }
-export default DeleteGroup
+export default DeleteUser

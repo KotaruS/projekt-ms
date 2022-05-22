@@ -91,7 +91,8 @@ const updateGroupDetails = asyncHandler(async (req, res) => {
   const { name, uri, owner, } = req.data
   const token = req.token?.id
   req.body.uri = (name === req.body.name || !req.body.name) ? uri : await generateSlug(2, req.body.name, Group)
-  req.body.image = req.body.image === '' ? ''
+  req.body.image = req.body.image === ''
+    ? ''
     : req.file?.buffer
     && `data:${req.file?.mimetype};base64,${req.file?.buffer.toString('base64')}`
   try {

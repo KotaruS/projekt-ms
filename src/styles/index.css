@@ -297,7 +297,6 @@ footer div {
   top: 4em;
   left: max(50%, 50vw);
   transform: translateX(-50%);
-  z-index: 20;
   background: rgb(var(--color));
   color: rgb(var(--comp-color));
   padding: .5em;
@@ -309,9 +308,10 @@ footer div {
   border: 1px solid rgb(var(--color-fg-accent), 10%);
   box-shadow: var(--shadow-sm) rgb(var(--color), 80%),
     var(--shadow-sm) rgb(var(--color-fg), 20%);
-  width: min(800px, 95vw);
+  width: min(700px, 95vw);
   animation: popIn .5s ease 1 forwards;
   transition: var(--def-tran);
+  z-index: 90;
 }
 
 @keyframes popIn {

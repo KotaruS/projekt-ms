@@ -81,7 +81,7 @@ function ContextMenu({ content, className }) {
             : 'context-dismiss'}
         onClick={handleClick}
       />
-      <div className={`context ${className}`}>
+      <div className={`context ${className ? className : ''}`}>
         <div
           className={toggle ? 'context-trigger on' : 'context-trigger'}
           onClick={handleClick}
@@ -93,10 +93,16 @@ function ContextMenu({ content, className }) {
           className='context-list'
         >
           {content.map(item => (
-            <li key={item.text}>
-              <Link to={item.link} state={item.state ?? null}>
-                {item.text}
-              </Link>
+            <li key={item.text} onClick={handleClick}>
+              {item.link
+                ? <Link
+                  to={item.link}
+                  state={item.state ?? null}>
+                  {item.text}
+                </Link>
+                : <span onClick={item.func}>
+                  {item.text}
+                </span>}
             </li>
           ))}
         </ul>
@@ -113,25 +119,25 @@ function Toast({ getter, setter }) {
   const clearToast = () => {
     toast.current.className = toast.current.className.search('disappear') === -1
       ? toast.current.className + ' disappear'
-      : toast.current.className.replace('disappear', '')
-    setTimeout(() => {
+      : toast.current.className
+    toast.current.addEventListener('animationend', clearAnimation, { once: true })
+  }
+
+  const clearAnimation = e => {
+    if (e.animationName === 'popOut') {
       const { message, ...rest } = getter
       setter(rest)
-    }, 1000)
+    }
   }
 
   useEffect(() => {
-    setDesign(changeDesign)
-    let timeid
     if (getter.message) {
-      timeid = setTimeout(clearToast, 8000)
-    }
-    clearTimeout(timer)
-    setTimer(timeid)
-    return () => {
+      setDesign(changeDesign)
       clearTimeout(timer)
+      const timeid = setTimeout(clearToast, 8000)
+      setTimer(timeid)
     }
-  }, [getter])
+  }, [getter.message])
 
   function changeDesign() {
     let icon, color
@@ -150,19 +156,21 @@ function Toast({ getter, setter }) {
     }
     return { icon, color }
   }
+  const handleClick = () => {
+    clearTimeout(timer)
+    clearToast()
+  }
 
   return (
     <>
       {getter.message && (
         <div
           ref={toast}
-          className={`toast ${design.color}`}>
-          {design.icon}
+          className={`toast ${design?.color}`}
+        >
+          {design?.icon}
           <span>{getter.message.text}</span>
-          <button onClick={() => {
-            clearTimeout(timer)
-            clearToast()
-          }}>
+          <button onClick={handleClick}>
             <IoClose />
           </button>
         </div>

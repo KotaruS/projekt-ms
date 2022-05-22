@@ -26,7 +26,7 @@ router.get('/me', requireToken, getUser)
 
 router.route('/:uri')
   .get(processURI(User), verifyToken, returnUser)
-  .put(processURI(User), requireToken, editUser)
+  .put(processURI(User), requireToken, upload.single('image'), editUser)
   .delete(processURI(User), requireToken, deleteUser)
 
 

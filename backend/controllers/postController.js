@@ -93,6 +93,10 @@ const getPosts = asyncHandler(async (req, res) => {
       const { groups } = await User.findById(token)
       const condition = groups ? { 'group': { $in: groups } } : null
       posts = await getPostsForFeed(condition, token, pointer)
+
+      if (posts.length === 0 && !pointer) {
+        posts = await getPostsForFeed(null, null, pointer)
+      }
       // getting feed for public home page 
     } else {
       posts = await getPostsForFeed(null, null, pointer)
@@ -144,7 +148,7 @@ const deletePost = asyncHandler(async (req, res) => {
       await Group.updateOne({ '_id': group }, { $pull: { posts: id } })
       // removes post from the user's posts list
       await User.updateOne({ '_id': author }, { $pull: { posts: id } })
-      res.status(200).json({ message: `Succesfully deleted post ${title}` })
+      res.status(200).json({ message: `Succesfully deleted post '${title}'` })
     }
   } catch {
     res.status(404)
@@ -152,7 +156,7 @@ const deletePost = asyncHandler(async (req, res) => {
   }
 })
 
-const getPostsForFeed = async (condition, caller = '', pointer) => {
+const getPostsForFeed = async (condition, caller, pointer) => {
   const pointerPost = await Post.findById(pointer)
   const posts = await Post.find({
     ...condition,

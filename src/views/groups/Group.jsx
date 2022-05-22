@@ -48,13 +48,12 @@ function Group() {
                     text: 'Delete group',
                     link: 'delete',
                   }]
-                  : [],
-                ...(contains(user?.data?._id, group?.data?.members))
-                  ? [{
-                    text: 'Leave group',
-                    link: 'leave',
-                  }]
-                  : [],
+                  : (contains(user?.data?._id, group?.data?.members))
+                    ? [{
+                      text: 'Leave group',
+                      link: 'leave',
+                    }]
+                    : [],
               ]}
             />}
           <img src={group.data.image ? group.data.image : '/group-blank.svg'} alt={group.data.name} />

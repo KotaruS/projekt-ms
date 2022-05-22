@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react"
-import { useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { UserContext } from "../../App"
 import { getDataFromURI, getUser, updatePost } from "../../lib/api"
@@ -9,6 +9,8 @@ function UpdatePost() {
   const { context, setContext } = useContext(UserContext)
   const { uri } = useParams()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   const user = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
@@ -27,8 +29,31 @@ function UpdatePost() {
     navigate('/403', { replace: true })
   }
 
+  const update = useMutation(updatePost, {
+    onSuccess: data => {
+      setContext({
+        ...context, message: {
+          type: 'success',
+          text: `Post updated!`
+        }
+      })
+      queryClient.invalidateQueries(['user', 'me'])
+      queryClient.invalidateQueries(['posts'])
+      queryClient.invalidateQueries(['post', data.uri])
+      navigate('/')
+    },
+    onError: error => {
+      setContext({
+        ...context, message: {
+          type: 'error',
+          text: error.message
+        }
+      })
+    }
+  })
+
   return (user.isSuccess && post.isSuccess) && (
-    <PostForm mutationFunc={updatePost} prefill={post.data} title="Edit post" />
+    <PostForm mutation={update} prefill={post.data} title="Edit post" />
   )
 }
 export default UpdatePost

@@ -6,9 +6,8 @@ import { IoArrowBack, IoClose } from "react-icons/io5"
 import { getUser, createPost } from "../../lib/api"
 import { DismissArea, StatusMessage } from "../../components"
 
-function PostForm({ mutationFunc = createPost, prefill, title }) {
+function PostForm({ mutation = createPost, prefill, title }) {
   const { context, setContext } = useContext(UserContext)
-  const queryClient = useQueryClient()
   const [imageblob, setImageBlob] = useState('')
   const navigate = useNavigate()
   const [form, setForm] = useState('')
@@ -17,18 +16,7 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
     retry: 1,
     enabled: !!context.token
   })
-  const submit = useMutation(mutationFunc, {
-    onSuccess: (data) => {
-      setForm('success')
-      navigate('/')
-      queryClient.invalidateQueries(['user', 'me'])
-      queryClient.invalidateQueries(['posts'])
-      queryClient.invalidateQueries(['post', data.uri])
-    },
-    onError: () => {
-      setForm('failed')
-    }
-  })
+
 
   const color = { '--color': 'var(--purple)' }
   const visible = { 'display': title === 'Edit post' ? 'none' : 'block' }
@@ -54,7 +42,10 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
     formStuff.append('content', e.target.content.value)
     formStuff.append('image', imageblob ? e.target.image.files[0] : '')
     formStuff.append('restricted', !e.target.restricted.checked)
-    submit.mutate({ data: formStuff, uri: prefill?.uri })
+    mutation.mutate({ data: formStuff, uri: prefill?.uri }, {
+      onSuccess: () => setForm('success'),
+      onError: () => setForm('failed'),
+    })
   }
 
   return (
@@ -69,8 +60,8 @@ function PostForm({ mutationFunc = createPost, prefill, title }) {
         </div>
         <StatusMessage
           isLoading={{ condition: form === 'submiting', message: 'Processing data...' }}
-          isSuccess={{ condition: form === 'success', message: 'Group created succesfully! Redirecting in a moment...' }}
-          isError={{ condition: form === 'failed', message: 'Submition failed, please try again' }}
+          isSuccess={{ condition: form === 'success', message: 'Submission succesful! Redirecting in a moment...' }}
+          isError={{ condition: form === 'failed', message: 'Submission failed, please try again' }}
         />
         <form action="/" onSubmit={handleSubmit} method="post">
           <label htmlFor="group" style={visible}>Select group</label>

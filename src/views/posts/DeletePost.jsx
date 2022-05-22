@@ -5,7 +5,7 @@ import { UserContext } from "../../App"
 import { deletePost, getDataFromURI, getUser } from "../../lib/api"
 
 function DeletePost() {
-  const { context } = useContext(UserContext)
+  const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const { uri } = useParams()
   const navigate = useNavigate()
@@ -17,7 +17,12 @@ function DeletePost() {
     retry: 0,
   })
   const postDel = useMutation(deletePost, {
-    onSuccess: () => {
+    onSuccess: data => {
+      setContext({
+        ...context, message: {
+          text: data.message
+        }
+      })
       queryClient.invalidateQueries('posts')
       navigate('/', { replace: true })
     }
