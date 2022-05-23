@@ -62,7 +62,6 @@ function UpdateUser() {
           text: 'User updated!'
         }
       })
-      console.log(data);
       queryClient.invalidateQueries(['user', 'me'])
       navigate(`/user/${data.uri}`)
     },

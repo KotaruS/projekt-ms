@@ -6,19 +6,33 @@ import { UserContext } from '../../App'
 import { loginUser } from '../../lib/api'
 import { DismissArea, StatusMessage } from '../../components'
 
-
-
 function Login() {
   const navigate = useNavigate()
   const { context, setContext } = useContext(UserContext)
   const queryClient = useQueryClient()
   const user = useMutation(loginUser, {
-    onSuccess: (data) => {
+    onSuccess: data => {
       const { token } = data
       localStorage.setItem('token', token)
-      setContext({ ...context, token })
+      setContext({
+        ...context,
+        message: {
+          type: 'success',
+          text: `${data.name} logged in!`,
+        },
+        token
+      })
       queryClient.invalidateQueries(['user', 'me'])
       navigate('/')
+    },
+    onError: error => {
+      setContext({
+        ...context,
+        message: {
+          type: 'error',
+          text: error.message,
+        }
+      })
     }
   })
   const handleClick = (event) => {

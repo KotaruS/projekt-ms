@@ -26,13 +26,27 @@ function Register() {
     onSuccess: (data) => {
       const { token } = data
       localStorage.setItem('token', token)
-      setContext({ ...context, token })
+      setContext({
+        ...context,
+        message: {
+          type: 'success',
+          text: 'Registration successful!',
+        },
+        token
+      })
       setForm('success')
       queryClient.invalidateQueries(['user', 'me'])
       navigate('/')
     },
-    onError: () => {
+    onError: error => {
       setForm('failed')
+      setContext({
+        ...context,
+        message: {
+          type: 'error',
+          text: error.message
+        }
+      })
     }
   })
 

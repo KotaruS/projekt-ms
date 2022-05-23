@@ -113,6 +113,16 @@
   max-width: 95vw;
 }
 
+.detail h4 {
+  background: linear-gradient(70deg, rgb(var(--blue)), rgb(var(--purple)));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: rgb(var(--purple));
+  font-size: 1.5rem;
+  margin: .25em 20px .5em 20px;
+}
+
 .side-nav {
   height: 100vh;
   max-height: 100%;
@@ -1176,6 +1186,66 @@
   align-items: center;
 }
 
+.group-list {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+  margin: 0 20px 10px 20px;
+}
+
+.group-list .card {
+  background: rgb(var(--pure-color));
+  border-radius: var(--radius);
+  border: 1px solid rgb(var(--blue), 20%);
+  width: fit-content;
+  max-width: 50%;
+  display: flex;
+  flex: 1 auto;
+  padding: 1em;
+  align-items: center;
+  justify-content: start;
+  height: auto;
+}
+
+.group-list .card img {
+  height: 100%;
+  border-radius: var(--radius);
+  background: rgb(var(--pure-color));
+}
+
+.group-list .card a {
+  display: flex;
+  height: calc(50px + 1em);
+  align-items: center;
+  flex: 1;
+  margin: -1em;
+  padding: 1em;
+  border-radius: var(--radius);
+  text-decoration: 3px solid underline transparent;
+  text-decoration-skip-ink: none;
+  color: inherit;
+  transition: var(--def-tran);
+}
+
+.group-list .card a:hover {
+  background: rgb(var(--blue), 10%);
+  text-decoration: 3px solid underline rgb(var(--teal), 30%);
+  color: var(--blue-dark);
+}
+
+.group-list .card a:hover span {
+  color: rgb(var(--blue));
+
+}
+
+.group-list .card span {
+  margin: 0 0 0 .5em;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: rgb(var(--purple));
+  transition: var(--def-tran);
+}
+
 
 /* group details */
 
@@ -1221,13 +1291,13 @@
 /* general */
 .problem-card {
   display: flex;
-  height: 150px;
+  height: auto;
   border: 1px solid rgb(var(--color-fg-accent), 20%);
   border-radius: var(--radius);
   background: rgb(var(--color-fg-accent), 3%);
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 20px 10px;
 }
 
 .problem-card svg {
@@ -1235,6 +1305,19 @@
   height: 4em;
   fill: rgb(var(--blue), 50%);
   stroke: rgb(var(--color-fg-accent), 50%);
+  transition: var(--def-tran);
+  animation: boo 2s ease-in-out alternate infinite;
+}
+
+@keyframes boo {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-5%);
+
+  }
 }
 
 .problem-card div {
@@ -1245,7 +1328,8 @@
   padding: .5em;
 }
 
-.problem-card div h4 {
+.problem-card div h5 {
+  font-size: 1.4rem;
   font-weight: 600;
 }
 

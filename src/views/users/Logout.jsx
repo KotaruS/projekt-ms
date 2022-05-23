@@ -10,7 +10,15 @@ function Logout() {
 
   useEffect(() => {
     localStorage.removeItem('token')
-    setContext({ ...context, token: '' })
+
+    setContext({
+      ...context,
+      message: {
+        type: 'info',
+        text: 'You have been logged out.',
+      },
+      token: ''
+    })
     queryClient.resetQueries('user')
     navigate('/', { replace: true })
   }, [])

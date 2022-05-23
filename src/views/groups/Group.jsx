@@ -10,7 +10,6 @@ import { ContextMenu } from "../../components"
 
 function Group() {
   const { context, setContext } = useContext(UserContext)
-  const queryClient = useQueryClient()
   const { uri } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -18,7 +17,8 @@ function Group() {
   const group = useQuery(['group', uri], getDataFromURI, {
     retry: 0,
     onError: (error) => {
-      if (error.message === "Invalid URL address") {
+      console.log(error);
+      if (error?.message === "Invalid URL address") {
         navigate('/404', { replace: true })
       }
     }
@@ -35,7 +35,7 @@ function Group() {
     <div className="detail">
       <div className="group-card">
         <div className="header">
-          {((user?.data?._id === group?.data?.owner) || (contains(user?.data?._id, group?.data?.members))) &&
+          {(user && (user?.data?._id === group?.data?.owner) || (contains(user?.data?._id, group?.data?.members))) &&
             <ContextMenu
               className='absolute-r'
               content={[
@@ -56,18 +56,20 @@ function Group() {
                     : [],
               ]}
             />}
-          <img src={group.data.image ? group.data.image : '/group-blank.svg'} alt={group.data.name} />
-          <h2>{group.data.name}</h2>
+          <img src={group?.data.image ? group?.data?.image : '/group-blank.svg'} alt={group?.data?.name} />
+          <h2>{group?.data?.name}</h2>
         </div>
-        <p>{group.data.description}</p>
-        <div className="stats">
-          <div className="icon-group" style={color}>
-            <FaUsers className="icon" />
-            <span>{(group.data.members.length > 1 || group.data.members.length === 0)
-              ? group.data.members.length + ' members'
-              : group.data.members.length + ' member'}</span>
+        <p>{group?.data?.description}</p>
+        {group?.data?.members &&
+          <div className="stats">
+            <div className="icon-group" style={color}>
+              <FaUsers className="icon" />
+              <span>{(group?.data?.members?.length > 1 || group?.data?.members?.length === 0)
+                ? group?.data?.members?.length + ' members'
+                : group?.data?.members?.length + ' member'}</span>
+            </div>
           </div>
-        </div>
+        }
       </div>
       {user.isSuccess &&
         <div className="button-group">
@@ -88,8 +90,8 @@ function Group() {
         : <div className="problem-card">
           <FaGhost />
           <div>
-            <h4>It seems there are no posts</h4>
-            <p>just this friendly ghost...</p>
+            <h5>It seems there are no posts</h5>
+            <p>Nobody in the group has posted yet or you need to be a member of the group to see them</p>
           </div>
         </div>}
     </div>

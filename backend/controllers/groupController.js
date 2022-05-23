@@ -3,8 +3,6 @@ const Group = require('../models/groupModel')
 const User = require('../models/userModel')
 const Post = require('../models/postModel')
 const generateSlug = require('../services/miscServices')
-const fs = require('fs')
-const path = require('path')
 
 
 // @desc Create a new group under logged in user
@@ -69,7 +67,7 @@ const getGroups = asyncHandler(async (req, res) => {
 // @route GET api/groups/:uri
 // @access Public
 const returnGroup = asyncHandler(async (req, res) => {
-  const { name, image, members, restricted } = req.data
+  const { _id: id, name, uri, image, posts, members, owner, restricted } = req.data
   const token = req.token?.id
   const isMember = members.indexOf(token) !== -1
 
@@ -77,9 +75,13 @@ const returnGroup = asyncHandler(async (req, res) => {
   if (!restricted || isMember) {
     res.status(200).json(req.data)
   } else {
-    res.status(401).json({
+    res.status(200).json({
       name,
       image,
+      owner,
+      uri,
+      posts: (!restricted || token === id) ? posts : [],
+      restricted,
     })
   }
 })

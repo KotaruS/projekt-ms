@@ -26,7 +26,7 @@ function CreateGroup() {
       })
       queryClient.invalidateQueries(['user', 'me'])
       queryClient.invalidateQueries(['group', data.uri])
-      navigate('/')
+      navigate(`/group/${data.uri}`)
     },
     onError: error => {
       setContext({

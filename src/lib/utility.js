@@ -53,6 +53,9 @@ function truncate(text, length = 256) {
 }
 
 function contains(target, subject) {
+  if (typeof target === 'undefined' || typeof subject === 'undefined') {
+    return false
+  }
   for (const object of subject) {
     if (target === object) {
       return true
