@@ -1,4 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { FaGhost } from 'react-icons/fa'
 import {
   IoInformationCircle,
   IoCheckmarkCircleOutline,
@@ -184,7 +185,16 @@ function DismissArea(props) {
   return (
     <div onClick={() => navigate(-1)} className='modal-background' />
   )
-
+}
+function BlankCard({ children }) {
+  return <div className="problem-card">
+    <FaGhost />
+    <div>
+      {children}
+    </div>
+  </div>
 }
 
-export { StatusMessage, ContextMenu, Toast, DismissArea }
+
+
+export { StatusMessage, ContextMenu, Toast, DismissArea, BlankCard }

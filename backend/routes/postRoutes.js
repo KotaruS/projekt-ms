@@ -12,7 +12,6 @@ const {
 } = require('../controllers/postController')
 const { upload } = require('../middleware/fileMiddleware')
 
-router.get('/dev', devMiddleware, getPosts)
 router.get('/', verifyToken, getPosts)
 
 router.post('/create', requireToken, upload.single('image'), createPost)

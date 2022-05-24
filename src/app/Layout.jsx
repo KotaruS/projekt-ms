@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, } from "react"
-import { Outlet, Link, useLocation } from "react-router-dom"
+import { Outlet, Link, useLocation, useSearchParams } from "react-router-dom"
 import Logo from "../styles/logo.svg"
 import { UserContext } from "../App"
 import {
@@ -15,12 +15,10 @@ import { Toast } from "../components"
 
 function Layout() {
   const { context, setContext } = useContext(UserContext)
-
   const user = useQuery(['user', 'me'], getUser, {
     retry: 1,
     enabled: !!context.token
   })
-
   const location = useLocation()
   const color = { '--color': 'var(--purple)' }
 

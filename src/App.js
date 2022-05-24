@@ -25,6 +25,7 @@ import LeaveGroup from "./views/groups/LeaveGroup"
 import ChangePass from "./views/users/ChangePass"
 import UpdateUser from "./views/users/UpdateUser"
 import DeleteUser from "./views/users/DeleteUser"
+import Wrapper from "./views/Wrapper"
 
 const queryClient = new QueryClient()
 
@@ -52,11 +53,7 @@ function ForumApp() {
       <Routes location={background || location}>
         <Route path='*' element={<NoMatch />} />
         <Route element={<Layout />}>
-          <Route index element={
-            <div className="feed-wrap">
-              <Feed />
-            </div>
-          } />
+          <Route index element={<Wrapper />} />
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
           <Route path='post' >

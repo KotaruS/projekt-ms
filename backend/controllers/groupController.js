@@ -63,6 +63,23 @@ const getGroups = asyncHandler(async (req, res) => {
   const groups = await Group.find().populate('owner', '-password')
   res.status(200).json(groups)
 })
+
+
+// @desc Gets all groups
+// @route GET api/groups/
+// @access Public
+const returnGroups = asyncHandler(async (req, res) => {
+  const search = req.query?.search
+  const condition = search ? { 'name': search } : {}
+  try {
+    const groups = await Group.find(condition)
+    res.status(200).json(groups)
+  } catch (error) {
+    res.status(400)
+    throw new Error(error)
+  }
+})
+
 // @desc Gets all data of a group
 // @route GET api/groups/:uri
 // @access Public
@@ -83,6 +100,90 @@ const returnGroup = asyncHandler(async (req, res) => {
       posts: (!restricted || token === id) ? posts : [],
       restricted,
     })
+  }
+})
+
+
+// @desc Gets all (pending)members of a group
+// @route GET api/groups/members/:uri
+// @access Public
+const returnGroupMembers = asyncHandler(async (req, res) => {
+  const { members, owner, restricted } = req.data
+  const token = req.token?.id
+  const isMember = members.indexOf(token) !== -1
+  if ((restricted && !isMember) || (req.query?.pendingList && token != owner)) {
+    res.status(403)
+    throw new Error('You don\'t have permissions to get group information')
+  }
+  try {
+    let memberData
+    if (req.query?.pendingList) {
+      md = await req.data.populate('pendingMembers', '-password')
+      memberData = md.pendingMembers
+    } else {
+      md = await req.data.populate('members', '-password')
+      memberData = md.members
+    }
+    res.status(200).json(memberData)
+
+  } catch (error) {
+    throw new Error('Unable to retrieve members list')
+  }
+})
+
+// @desc Update group member from pending or normal list
+// @route PUT api/groups/members/:uri
+// @access Private
+const updateGroupMembers = asyncHandler(async (req, res) => {
+  const { _id: id, name, members, pendingMembers, owner, } = req.data
+  const token = req.token?.id
+
+  if (req.body?.accept == token
+    || req.body?.decline == token
+    || req.body?.kick == token
+    || req.body?.newOwner == token) {
+    res.status(400)
+    throw new Error('You cannot perform that action on yourself')
+  }
+
+  try {
+    if (token == owner) {
+      // when new user is accepted from pending members list
+      if (req.body?.accept) {
+        req.data.pendingMembers = pendingMembers.filter(member => member?._id != req.body?.accept)
+        req.data.members = [...members, req.body?.accept]
+        req.data.save()
+        const user = await User.findById(req.body?.accept)
+        user.groups = [...user.groups, id]
+        user.save()
+        res.status(200).json({ message: `Accepted ${user.name} as a member of ${name}` })
+        // when new user is declined from pending members list
+      } else if (req.body?.decline) {
+        // removes the user from the list
+        req.data.pendingMembers = pendingMembers.filter(member => member?._id != req.body?.decline)
+        req.data.save()
+        res.status(200).json({ message: 'Removed user from waiting list' })
+        // when new user is kicked by owner from members list
+      } else if (req.body?.kick) {
+        req.data.members = members.filter(member => member?._id != req.body?.kick)
+        req.data.save()
+        const user = await User.findById(req.body?.kick)
+        await User.updateOne({ _id: req.body?.kick }, { $pull: { groups: id } })
+        res.status(200).json({ message: `Kicked member ${user.name}` })
+        // when new user is transfered ownership by current owner
+      } else if (req.body?.newOwner) {
+        const user = await User.findById(req.body?.newOwner)
+        req.data.owner = req.body?.newOwner
+        req.data.save()
+        res.status(200).json({ message: `Transfered ownership to ${user.name}` })
+      }
+    } else {
+      res.status(403)
+      throw new Error('You do not have permission to perform this action')
+    }
+  } catch (err) {
+    res.status(400)
+    throw new Error(err)
   }
 })
 
@@ -110,7 +211,7 @@ const updateGroupDetails = asyncHandler(async (req, res) => {
       throw new Error('You do not have permission to update group\'s data')
     }
   } catch {
-    res.status(500)
+    res.status(400)
     throw new Error('Could not update group details')
   }
 })
@@ -121,15 +222,22 @@ const updateGroupDetails = asyncHandler(async (req, res) => {
 const joinGroup = asyncHandler(async (req, res) => {
   const { _id: id, name, members, pendingMembers, restricted } = req.data
   const token = req.token?.id
+  const isPendingMember = pendingMembers.indexOf(token) !== -1
 
   if (members.indexOf(token) !== -1) {
     res.status(400)
     throw new Error('You are already in the group.')
   }
 
+  if (isPendingMember) {
+    res.status(400)
+    throw new Error('You are already in the waiting list')
+  }
+
   try {
     if (restricted) {
-      pendingMembers = [...pendingMembers, token]
+      req.data.pendingMembers = [...pendingMembers, token]
+      req.data.save()
       res.status(200).json({ message: "Applied to group\'s membership, awaiting owner\'s approval." })
     } else {
       req.data.members = [...members, token]
@@ -200,6 +308,9 @@ module.exports = {
   getGroups,
   groupExists,
   returnGroup,
+  returnGroups,
+  returnGroupMembers,
+  updateGroupMembers,
   updateGroupDetails,
   joinGroup,
   leaveGroup,

@@ -26,7 +26,40 @@ const createGroup = async ({ data }) => {
 const joinGroup = async (uri) => {
   try {
     const res = await fetch(`${API_URL}/groups/join/${uri}`, {
-      method: 'GET',
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+const getGroups = async ({ queryKey }) => {
+  try {
+    const [_key, keyword] = queryKey
+    const param = keyword ? `?search=${keyword}` : ''
+    const res = await fetch(`${API_URL}/groups/${param}`, {
+      headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+const getGroupMembers = async ({ queryKey }) => {
+  try {
+    const [key, status, uri] = queryKey
+    const param = status ? '?pendingList=true' : ''
+    const res = await fetch(`${API_URL}/groups/members/${uri}${param}`, {
       headers: getConfig(),
     })
     const group = await res.json()
@@ -42,8 +75,28 @@ const joinGroup = async (uri) => {
 const leaveGroup = async (uri) => {
   try {
     const res = await fetch(`${API_URL}/groups/leave/${uri}`, {
-      method: 'GET',
       headers: getConfig(),
+    })
+    const group = await res.json()
+    if (!res.ok) {
+      throw group.message
+    }
+    return group
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+const updateMember = async (data) => {
+  try {
+    const { uri, ...rest } = data
+    const res = await fetch(`${API_URL}/groups/members/${uri}`, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json',
+        ...getConfig()
+      },
+      body: JSON.stringify(rest),
     })
     const group = await res.json()
     if (!res.ok) {
@@ -107,15 +160,14 @@ const createPost = async ({ data }) => {
 
 const getPosts = async ({ queryKey, pageParam = 0 }) => {
   try {
-    const [_key, key, value] = queryKey
-    const query =
-      (key && value)
-        ? pageParam
-          ? `/?${key}=${value}&pointer=${pageParam}`
-          : `/?${key}=${value}`
-        : pageParam
-          ? `/?pointer=${pageParam}`
-          : ''
+    const [_key, spec] = queryKey
+    const entries = { ...spec, pointer: pageParam }
+    let query = ''
+    for (const [key, value] of Object.entries(entries)) {
+      if (value) {
+        query += query === '' ? `/?${key}=${value}` : `&${key}=${value}`
+      }
+    }
     const res = await fetch(`${API_URL}/posts${query}`, {
       headers: getConfig(),
     })
@@ -125,7 +177,7 @@ const getPosts = async ({ queryKey, pageParam = 0 }) => {
     }
     return post
   } catch (err) {
-    throw (err)
+    throw new Error(err)
   }
 }
 
@@ -329,7 +381,7 @@ const checkForExistance = async ({ queryKey }) => {
   try {
     const [route, key, value] = queryKey
     if (value === '') { return }
-    const exists = await fetch(`${API_URL}/${route}s/?${key}=${value}`)
+    const exists = await fetch(`${API_URL}/${route}s/check?${key}=${value}`)
     return exists.json()
   } catch (err) {
     throw new Error(err)
@@ -338,7 +390,10 @@ const checkForExistance = async ({ queryKey }) => {
 
 export {
   createGroup,
+  getGroups,
+  getGroupMembers,
   joinGroup,
+  updateMember,
   leaveGroup,
   updateGroup,
   deleteGroup,

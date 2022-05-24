@@ -4,8 +4,7 @@ import { UserContext } from "../../App"
 import { getUser, } from "../../lib/api"
 import { useContext } from "react"
 import Feed from "../Feed"
-import { ContextMenu } from "../../components"
-import { FaGhost } from "react-icons/fa"
+import { BlankCard, ContextMenu } from "../../components"
 
 function User() {
   const { uri } = useParams('uri')
@@ -67,24 +66,18 @@ function User() {
             )}
           </div>
         </>
-        : <div className="problem-card">
-          <FaGhost />
-          <div>
-            <h5>It seems there are no groups</h5>
-            <p>{user?.name} either hasn't joined any or he doesn't want anyone to see his groups...</p>
-          </div>
-        </div>
+        : <BlankCard>
+          <h5>It seems there are no groups</h5>
+          <p>{user?.name} either hasn't joined any or he doesn't want anyone to see his groups...</p>
+        </BlankCard>
       }
       <h4>Posts</h4>
       {user?.posts?.length !== 0
         ? <Feed />
-        : <div className="problem-card">
-          <FaGhost />
-          <div>
-            <h5>It seems there are no posts</h5>
-            <p>{user?.name} either hasn't posted yet or he doesn't want anyone to see his posts...</p>
-          </div>
-        </div>
+        : <BlankCard>
+          <h5>It seems there are no posts</h5>
+          <p>{user?.name} either hasn't posted yet or he doesn't want anyone to see his posts...</p>
+        </BlankCard>
       }
     </div>
   )

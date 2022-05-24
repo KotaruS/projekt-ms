@@ -15,7 +15,7 @@ const {
 } = require('../controllers/userController')
 const { upload } = require('../middleware/fileMiddleware')
 
-router.get('/', userExists)
+router.get('/check', userExists)
 router.post('/register', upload.single('image'), registerUser)
 
 router.post('/login', loginUser)

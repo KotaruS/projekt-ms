@@ -77,8 +77,8 @@ h1 {
 }
 
 .green {
-  --color: var(--teal);
-  --comp-color: var(--color-fg);
+  --color: 35, 210, 120;
+  --comp-color: var(--pure-color);
 }
 
 .purple {

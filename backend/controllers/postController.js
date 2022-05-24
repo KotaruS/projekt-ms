@@ -77,11 +77,14 @@ const returnPost = asyncHandler(async (req, res) => {
 // @access Public/Private
 const getPosts = asyncHandler(async (req, res) => {
   const token = req.token?.id
-  const { group: groupParam, user: userParam, pointer } = req.query
+  const { group: groupParam, user: userParam, pointer, search } = req.query
   let posts
   try {
-    // getting feed for user profile
-    if (userParam) {
+    // getting feed for searched string
+    if (search) {
+      posts = await getPostsForFeed({ 'title': search }, token, pointer)
+      // getting feed for user profile
+    } else if (userParam) {
       const { _id } = await User.findOne({ 'uri': userParam })
       posts = await getPostsForFeed({ 'author': _id }, token, pointer)
       // getting feed for group profile
@@ -93,7 +96,6 @@ const getPosts = asyncHandler(async (req, res) => {
       const { groups } = await User.findById(token)
       const condition = groups ? { 'group': { $in: groups } } : null
       posts = await getPostsForFeed(condition, token, pointer)
-
       if (posts.length === 0 && !pointer) {
         posts = await getPostsForFeed(null, null, pointer)
       }

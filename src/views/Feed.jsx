@@ -15,7 +15,7 @@ function Feed() {
   const [path, setPath] = useState('')
   const location = useLocation()
   const feed = useInfiniteQuery(
-    ['posts', ...path],
+    ['posts', path],
     getPosts,
     {
       getNextPageParam: (lastPage, pages) => {
@@ -28,11 +28,15 @@ function Feed() {
     retry: 1,
     enabled: !!context.token
   })
+
   useEffect(() => {
     const path = location.pathname.split('/')
-    const keys = path.slice(path.length - 2)
-    if (keys[0]) {
-      setPath(keys)
+    const [_, search] = location.search.split('?searchbar=')
+    const [key, value] = path.slice(path.length - 2)
+    if (key) {
+      setPath({ [key]: value, search })
+    } else if (search) {
+      setPath({ search })
     } else {
       setPath('')
     }
@@ -44,11 +48,6 @@ function Feed() {
     }
   }, [inView, feed?.hasNextPage])
 
-  const postDel = useMutation(deletePost, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('posts')
-    }
-  })
 
   const color = { '--color': 'var(--blue)' }
 

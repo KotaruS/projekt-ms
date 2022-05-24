@@ -34,6 +34,15 @@ function JoinGroup() {
         }
       })
       navigate(-1)
+    },
+    onError: error => {
+      setContext({
+        ...context, message: {
+          type: 'error',
+          text: error.message
+        }
+      })
+      navigate(-1)
     }
   })
 
