@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FaGhost } from 'react-icons/fa'
 import {
   IoInformationCircle,
@@ -11,7 +11,6 @@ import {
   IoClose
 } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom'
-import { UserContext } from '../App'
 
 function StatusMessage({ isInfo, isLoading, isSuccess, isError }) {
   return (

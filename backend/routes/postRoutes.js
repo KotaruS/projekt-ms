@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { requireToken, verifyToken } = require('../middleware/authMiddleware')
-const { processURI, devMiddleware } = require('../middleware/parseMiddleware')
+const { processURI } = require('../middleware/parseMiddleware')
 const Post = require('../models/postModel')
 const {
   createPost,

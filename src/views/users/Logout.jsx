@@ -10,7 +10,6 @@ function Logout() {
 
   useEffect(() => {
     localStorage.removeItem('token')
-
     setContext({
       ...context,
       message: {

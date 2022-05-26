@@ -1,9 +1,8 @@
 import "./styles/App.css"
-import { createContext, useContext, useMemo, useState } from "react"
+import { createContext, useMemo, useState } from "react"
 import { QueryClient, QueryClientProvider, } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import Feed from './views/Feed'
 import Logout from './views/users/Logout'
 import Login from './views/users/Login'
 import Register from './views/users/Register'

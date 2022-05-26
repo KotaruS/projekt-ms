@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react'
-import { IoArrowBack, IoClose } from 'react-icons/io5'
+import { IoArrowBack } from 'react-icons/io5'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getUser, updateUser, } from '../../lib/api'

@@ -1,8 +1,4 @@
-const asyncHandler = require('express-async-handler')
-const path = require('path')
 const multer = require('multer')
-const { nanoid } = require('nanoid')
-const fs = require('fs')
 
 // const multerStorage = multer.diskStorage({
 //   destination: function (req, file, cb) {

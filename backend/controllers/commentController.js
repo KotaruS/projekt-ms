@@ -1,7 +1,5 @@
 const asyncHandler = require('express-async-handler')
 const Post = require('../models/postModel')
-const User = require('../models/userModel')
-const Comment = require('../models/commentModel')
 
 // @desc Create a new comment under post
 // @route POST api/comments/:posturi
@@ -30,7 +28,6 @@ const returnComments = asyncHandler(async (req, res) => {
 // @access Private
 const editComment = asyncHandler(async (req, res) => {
   try {
-
     const post = await Post.findOne({
       'comments': {
         $elemMatch: { '_id': req.params?.id, 'author': req.token?.id }
@@ -63,9 +60,12 @@ const deleteComment = asyncHandler(async (req, res) => {
     {
       $pull: { 'comments': { '_id': req.params.id } }
     })
-  res.status(200).json({
-    message: `Deleted comment with ID ${req.params.id}`
-  })
+  if (post) {
+    res.status(200).json({ message: `Deleted comment with ID ${req.params.id}` })
+  } else {
+    res.status(400)
+    throw new Error('Comment cannot be deleted')
+  }
 })
 
 

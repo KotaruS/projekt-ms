@@ -3,7 +3,7 @@ import { IoRepeat, IoCheckmark, IoClose, IoThumbsDownSharp } from "react-icons/i
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { Link } from "react-router-dom"
 import { UserContext } from "../../App"
-import { getDataFromURI, getGroupMembers, getUser, updateMember } from "../../lib/api"
+import { getGroupMembers, getUser, updateMember } from "../../lib/api"
 
 function GroupMembersList({ groupData, state, setState }) {
   const { context, setContext } = useContext(UserContext)
@@ -18,7 +18,6 @@ function GroupMembersList({ groupData, state, setState }) {
     retry: 0,
     enabled: !!state
   })
-
 
   const mutateMember = useMutation(updateMember, {
     onSuccess: (data) => {

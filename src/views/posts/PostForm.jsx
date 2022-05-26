@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useQuery, } from "react-query"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
 import { IoArrowBack, IoClose } from "react-icons/io5"
@@ -7,7 +7,7 @@ import { getUser, createPost } from "../../lib/api"
 import { DismissArea, StatusMessage } from "../../components"
 
 function PostForm({ mutation = createPost, prefill, title }) {
-  const { context, setContext } = useContext(UserContext)
+  const { context } = useContext(UserContext)
   const [imageblob, setImageBlob] = useState('')
   const navigate = useNavigate()
   const [form, setForm] = useState('')

@@ -1,4 +1,3 @@
-import { FaGhost } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { BlankCard } from "../components";
@@ -6,8 +5,7 @@ import { getGroups, getPosts } from "../lib/api";
 import Feed from "./Feed"
 
 function Wrapper() {
-  const [search, setSearch] = useSearchParams();
-
+  const [search] = useSearchParams();
 
   const { data: groups } = useQuery(['groupList', search.get('searchbar')], getGroups, {
     retry: 0,

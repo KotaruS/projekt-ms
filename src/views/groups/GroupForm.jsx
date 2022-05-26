@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useQuery } from "react-query"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack, IoClose } from "react-icons/io5"
-import { checkForExistance, createGroup } from "../../lib/api"
+import { checkForExistance } from "../../lib/api"
 import { DismissArea, StatusMessage } from "../../components"
 import { useDebouncedState } from "../../lib/utility"
 

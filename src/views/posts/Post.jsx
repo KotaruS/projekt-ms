@@ -1,12 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { UserContext } from "../../App"
-import {
-  FaCalendar,
-  FaCommentAlt,
-  FaPaperPlane,
-  FaTrash,
-} from "react-icons/fa"
+import { FaCalendar, FaCommentAlt, FaPaperPlane, } from "react-icons/fa"
 import { getDataFromURI, getUser, createComment, deleteComment, updateComment, } from "../../lib/api"
 import { useContext, useEffect, useState } from "react"
 import { ContextMenu, DismissArea } from "../../components"

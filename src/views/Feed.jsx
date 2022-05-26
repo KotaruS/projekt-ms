@@ -1,17 +1,16 @@
 import React, { useContext, useEffect, useState } from "react"
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query"
+import { useInfiniteQuery, useQuery, useQueryClient } from "react-query"
 import { Link, useLocation } from "react-router-dom"
 import { UserContext } from "../App"
-import { getPosts, getUser, deletePost } from "../lib/api"
-import { FaCommentAlt, FaPen, FaCalendar, FaTrash } from 'react-icons/fa'
+import { getPosts, getUser } from "../lib/api"
+import { FaCommentAlt, FaCalendar } from 'react-icons/fa'
 import { truncate } from "../lib/utility"
 import { useInView } from "react-intersection-observer"
 import { ContextMenu } from "../components"
 
 function Feed() {
-  const queryClient = useQueryClient()
   const { ref, inView } = useInView()
-  const { context, setContext } = useContext(UserContext)
+  const { context } = useContext(UserContext)
   const [path, setPath] = useState('')
   const location = useLocation()
   const feed = useInfiniteQuery(

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useQuery } from "react-query"
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
 import { UserContext } from "../../App"
 import { getDataFromURI, getUser } from "../../lib/api"
@@ -10,7 +10,7 @@ import { BlankCard, ContextMenu } from "../../components"
 import GroupMembersList from "./GroupMembersList"
 
 function Group() {
-  const { context, setContext } = useContext(UserContext)
+  const { context } = useContext(UserContext)
   const { uri } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
