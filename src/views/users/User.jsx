@@ -50,9 +50,9 @@ function User() {
             />}
         </div>
       </div>
+      <h4>Groups</h4>
       {user?.groups?.length !== 0
         ? <>
-          <h4>Groups</h4>
           <div className="group-list">
             {user.groups?.map(group =>
               <div className="card" key={group?._id}>

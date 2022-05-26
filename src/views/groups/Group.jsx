@@ -19,7 +19,6 @@ function Group() {
   const group = useQuery(['group', uri], getDataFromURI, {
     retry: 0,
     onError: (error) => {
-      console.log(error);
       if (error?.message === "Invalid URL address") {
         navigate('/404', { replace: true })
       }
