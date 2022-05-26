@@ -62,7 +62,7 @@ function Feed() {
                   {post.group
                     ? <Link className="linker" style={color}
                       to={`/group/${post.group.uri}`}>
-                      {post.group.name}
+                      {truncate(post.group.name, 30)}
                     </Link>
                     : 'deleted group'
                   }
@@ -72,7 +72,8 @@ function Feed() {
                     ?
                     <Link className="linker" style={color}
                       to={`/user/${post.author?.uri}`}>
-                      {post.author?.name}
+                      {truncate(post.author?.name, 30)}
+
                     </Link>
                     : ' deleted user'
                   }
@@ -101,12 +102,12 @@ function Feed() {
                   {post.image ? <img src={post.image} alt={post.title} /> : truncate(post.content, 300)}
                 </div></Link>
               <div className="tools" >
-                <div className="icon-group" style={color}>
+                <Link to={`/post/${post.uri}#comment`} className="icon-group buttoner" style={color}>
                   <FaCommentAlt className="icon" />
                   <span>{(post.comments.length > 1 || post.comments.length === 0)
                     ? post.comments.length + ' comments'
                     : post.comments.length + ' comment'}</span>
-                </div>
+                </Link>
               </div>
             </div>
           ))}

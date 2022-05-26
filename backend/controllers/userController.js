@@ -103,14 +103,13 @@ const loginUser = asyncHandler(async (req, res) => {
 const returnUser = asyncHandler(async (req, res) => {
   const { _id: id, name, uri, image, posts, groups, restricted } = req.data
   const token = req.token?.id
-  await req.data.populate('groups', '-image -posts -members')
+  await req.data.populate('groups', '-posts -members')
 
-  // user requesting his data gets full data
+  // user requesting his data gets full data no matter what
   if (token == id) {
     res.status(200).json({
       _id: req.data.id,
       name,
-      image,
       uri,
       image,
       posts,

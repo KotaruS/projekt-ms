@@ -68,7 +68,7 @@ function GroupMembersList({ groupData, state, setState }) {
         <ul>
           {members?.data?.map(member =>
             <li key={member?._id}>
-              <Link className="buttoner blue" to={`/user/${member?.uri}`}>
+              <Link className="buttoner purple" to={`/user/${member?.uri}`}>
                 <img src={member?.image || '/user-blank.svg'} alt={member?.name} />
                 <span className="member-name">
                   {(user && user?.data?._id === member?._id) ? 'You' : member?.name}

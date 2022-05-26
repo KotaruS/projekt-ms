@@ -107,24 +107,28 @@ function Post() {
       <div className="detail">
         <div className="post-card" >
           <div className="header">
-            <div className="label">In</div>
-            <Link className="buttoner item" style={color} to={`/group/${post.data.group?.uri}`}>
-              <img src={post.data.group?.image || "/group-blank.svg"} alt="group icon" />
-              {post.data.group?.name}
-            </Link>
-            <div className="label">by</div>
-            {post.data.author
-              ? <Link className="buttoner item" style={color} to={`/user/${post.data.author?.uri}`}>
-                <img src={post.data.author?.image || "/user-blank.svg"} alt="user icon" />
-                {post.data.author?.name}
+            <div className="keeper">
+              <div className="label">In</div>
+              <Link className="buttoner item" style={color} to={`/group/${post.data.group?.uri}`}>
+                <img src={post.data.group?.image || "/group-blank.svg"} alt="group icon" />
+                {post.data.group?.name}
               </Link>
-              : <>
-                <span className="buttoner item empty" style={color}>
-                  <img src="/user-blank.svg" alt="user icon" />
-                  deleted user
-                </span>
-              </>
-            }
+            </div>
+            <div className="keeper">
+              <div className="label">by</div>
+              {post.data.author
+                ? <Link className="buttoner item" style={color} to={`/user/${post.data.author?.uri}`}>
+                  <img src={post.data.author?.image || "/user-blank.svg"} alt="user icon" />
+                  {post.data.author?.name}
+                </Link>
+                : <>
+                  <span className="buttoner item empty" style={color}>
+                    <img src="/user-blank.svg" alt="user icon" />
+                    deleted user
+                  </span>
+                </>
+              }
+            </div>
             <div className="icon-group" style={color}>
               <FaCalendar className="icon" />
               <span>{context.timeFormat.format(new Date(post.data.createdAt)) + ' | ' + context.dateFormat.format(new Date(post.data.createdAt))}</span>

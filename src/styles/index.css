@@ -26,6 +26,8 @@
   --fonts: 'Lexend', 'Segoe UI', sans-serif;
   --transition: 0.3s ease;
   --def-tran: all var(--transition);
+  --navbar-h: 50px;
+  font-size: clamp(.7rem, 1vw, 1em);
 }
 
 * {
@@ -277,7 +279,10 @@ footer {
   flex-direction: row;
   justify-content: space-between;
   box-shadow: var(--shadow-full);
+  background: rgb(var(--pure-color));
   align-items: center;
+  position: relative;
+  z-index: 4;
 }
 
 footer img {
@@ -294,7 +299,7 @@ footer div {
 
 .toast {
   position: fixed;
-  top: 4em;
+  top: calc(var(--navbar-h) + 1em);
   left: max(50%, 50vw);
   transform: translateX(-50%);
   background: rgb(var(--color));
@@ -381,4 +386,29 @@ footer div {
   color: rgb(var(--comp-color));
   stroke: rgb(var(--comp-color));
   fill: rgb(var(--comp-color));
+}
+
+.mobile {
+  display: none;
+}
+
+.desktop {
+  display: inherit;
+}
+
+@media screen and (max-width: 824px) {
+  .toast button {
+    opacity: 1;
+    right: .5rem;
+
+  }
+
+  .mobile {
+    display: unset;
+  }
+
+  .desktop {
+    display: none;
+  }
+
 }
