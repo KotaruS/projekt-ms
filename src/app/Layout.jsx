@@ -111,7 +111,7 @@ function Layout() {
               </ul>
             </>
             : <>
-              <h4>To see more please</h4>
+              <h4>To see more please login</h4>
               <ul className="mobile buttons">
                 <li><Link to='/login' className="btn" style={color} state={{ background: location }}
                   onClick={() => setNavbar(false)}>
